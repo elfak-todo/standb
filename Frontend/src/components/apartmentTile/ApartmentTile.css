@@ -1,0 +1,22 @@
+.desc-text-wrap {
+    margin-top: 5px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile-card {
+    position: relative;
+}
+
+.badge-div {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    color: white;
+    font-size: smaller;
+    border-radius: 5px;
+    padding: 4px;
+}
