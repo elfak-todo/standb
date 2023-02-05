@@ -18,7 +18,7 @@ function ApartmentDetails() {
         </div>
         <>
           <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
-            Prati oglas
+            Sačuvaj oglas
           </Button>
         </>
       </div>
