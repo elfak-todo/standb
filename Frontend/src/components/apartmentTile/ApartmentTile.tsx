@@ -1,22 +1,22 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Divider,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { useNavigate } from 'react-router';
 import apImg from '../../assets/ap1.jpg';
 
 import './ApartmentTile.css';
 
 function ApartmentTile() {
+  const navigate = useNavigate();
+
   return (
     <Card sx={{ width: 250, height: 350, margin: 2 }} className="tile-card">
       <Box className="badge-div" sx={{ backgroundColor: 'primary.dark' }}>
         <strong> 55 m² </strong>
       </Box>
-      <CardMedia sx={{ height: 150 }} image={apImg} />
+      <CardMedia
+        sx={{ height: 150, cursor: 'pointer' }}
+        image={apImg}
+        onClick={() => navigate('/details')}
+      />
       <CardContent>
         <Typography>Dvoiposoban stan</Typography>
         <Typography variant="body2">Čair, Niš</Typography>

@@ -1,0 +1,8 @@
+.gallery-main-div {
+    display: flex;
+}
+
+.vertical-div {
+    display: flex;
+    flex-direction: column;
+}
