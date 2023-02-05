@@ -1,0 +1,16 @@
+.header-main-div {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-title-div {
+    font-size: xx-large;
+    font-weight: 700;
+}
+
+.header-search-div {
+    width: 200px;
+}
