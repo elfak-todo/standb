@@ -1,5 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 
+//MongoDB
+
+var connString = System.Environment.GetEnvironmentVariable("MONGODB_CONNSTRING");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
