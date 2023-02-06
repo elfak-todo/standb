@@ -1,0 +1,28 @@
+.details-main-div {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.details-box-div {
+    display: flex;
+    width: 100%;
+}
+
+.details-box-part {
+    display: flex;
+    flex-direction: column;
+    margin-right: 50px;
+}
+
+.details-header-div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.details-title-div {
+    display: flex;
+    flex-direction: column;
+}

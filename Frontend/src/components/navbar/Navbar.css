@@ -1,0 +1,23 @@
+.navbar-main-div {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.navbar-auth-div {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-user-div {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo-div {
+    margin: 0px 25px 0px 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}

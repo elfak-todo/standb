@@ -1,13 +1,19 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+
+import Filter from '../filter/Filter';
+import Search from '../search/Search';
+import './HomePageHeader.css';
 
 function HomePageHeader() {
   return (
-    <>
-      <Typography variant="h3">StanDB</Typography>
-      <Typography variant="subtitle1">
-        Oglasi za prodaju stanova agencije StandDB
-      </Typography>
-    </>
+    <div className="header-main-div">
+      <Box className="header-title-div" sx={{ color: 'primary.dark' }}>
+        STAN DB
+      </Box>
+      <Typography variant="h6">Oglasi za prodaju nekretnina</Typography>
+      <Search />
+      <Filter />
+    </div>
   );
 }
 

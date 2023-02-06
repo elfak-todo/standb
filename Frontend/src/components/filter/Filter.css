@@ -1,0 +1,6 @@
+.filter-main-div {
+    width: 600px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+}
