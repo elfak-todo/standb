@@ -2,14 +2,26 @@ import { AppBar, Avatar, Box, Button, Typography } from '@mui/material';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { red, green } from '@mui/material/colors';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import './Navbar.css';
 import Auth from '../auth/Auth';
+import UserContext from '../userManager/UserManager';
 
 function Navbar() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
+
+  const handleLoginOrLogout = () => {
+    if (user) {
+      setUser(null);
+      return;
+    }
+
+    setIsAuthDialogOpen(true);
+  };
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -31,26 +43,30 @@ function Navbar() {
               Kreiraj oglas
             </Button>
             <div className="navbar-auth-div">
-              {/* <Avatar
-                sx={{
-                  bgcolor: green[500],
-                  mr: 0.5,
-                  fontSize: 'small',
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                AM
-              </Avatar>
-              <span>Andrija Mitć</span> */}
+              {user && (
+                <div className="navbar-user-div">
+                  <Avatar
+                    sx={{
+                      bgcolor: green[500],
+                      mr: 0.5,
+                      fontSize: 'small',
+                      width: 32,
+                      height: 32,
+                    }}
+                  >
+                    {`${user?.firstName[0]}${user?.lastName[0]}`}
+                  </Avatar>
+                  <span>{`${user?.firstName} ${user?.lastName}`}</span>
+                </div>
+              )}
               <Button
                 variant="contained"
                 color="error"
                 size="small"
                 sx={{ ml: 2, bgcolor: red[500] }}
-                onClick={() => setIsAuthDialogOpen(true)}
+                onClick={handleLoginOrLogout}
               >
-                Prijavi se
+                {user ? 'Odjavi se' : 'Prijavi se'}
               </Button>
             </div>
           </div>

@@ -21,9 +21,9 @@ function Auth({ isOpen, setIsOpen }: AuthProps) {
       >
         <Tab value={1} label="Prijavi se" />
         <Tab value={2} label="Registruj se" />
-      </Tabs>{' '}
+      </Tabs>
       {tab == 1 && <Login setDialogOpen={setIsOpen} />}
-      {tab == 2 && <Register setDialogOpen={setIsOpen} />}
+      {tab == 2 && <Register setDialogOpen={setIsOpen} setTab={setTab} />}
     </Dialog>
   );
 }

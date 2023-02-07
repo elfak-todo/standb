@@ -9,14 +9,15 @@ import {
   Typography,
 } from '@mui/material';
 import { Dispatch, SetStateAction, MouseEvent, useState } from 'react';
-
-import UserRegisterDto from '../../../models/User.register.dto';
+import UserRegisterDto from '../../../dto/User.register.dto';
+import { register } from '../../../services/user.service';
 
 interface RegisterProps {
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  setTab: Dispatch<SetStateAction<number>>;
 }
 
-function Register({ setDialogOpen }: RegisterProps) {
+function Register({ setDialogOpen, setTab }: RegisterProps) {
   const [newUser, setNewUser] = useState<UserRegisterDto>({
     firstName: '',
     lastName: '',
@@ -46,9 +47,25 @@ function Register({ setDialogOpen }: RegisterProps) {
       return;
     }
 
-    console.log(newUser);
-
-    setDialogOpen(false);
+    register(newUser)
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: 'Registracija je uspešna',
+          severity: 'success',
+        });
+        setTimeout(() => setTab(1), 1000);
+      })
+      .catch(({ response }) =>
+        setSnackbar({
+          open: true,
+          message:
+            response.data == 'EmailAlreadyRegistered'
+              ? 'Email je već registrovan.'
+              : 'Greška na strani servera.',
+          severity: 'error',
+        })
+      );
   };
 
   return (

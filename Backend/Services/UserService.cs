@@ -9,7 +9,7 @@ namespace Backend.Services;
 public interface IUserService
 {
     Task<List<User>?> GetUsers();
-    Task<ServiceResult<LoginDto>> Login(LoginCredsDto loginCreds);
+    Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds);
     Task<ServiceResult<bool>> Register(RegisterDto regData);
     Task<ServiceResult<User>> Authenticate(string email, string password);
 }
@@ -32,18 +32,22 @@ public class UserService : IUserService
 
     public async Task<List<User>?> GetUsers() => await _userCollection.Find(_ => true).ToListAsync();
 
-    public async Task<ServiceResult<LoginDto>> Login(LoginCredsDto loginCreds)
+    public async Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds)
     {
         var res = await Authenticate(loginCreds.Email, loginCreds.Password);
 
         if (res.Result == null)
-            return new ServiceResult<LoginDto> { Result = null, StatusCode = ServiceStatusCode.Other, ErrorMessage = "CredsInvalid" };
+            return new ServiceResult<LoginDetailsDto> { Result = null, StatusCode = ServiceStatusCode.Other, ErrorMessage = res.ErrorMessage };
 
-        return new ServiceResult<LoginDto>
+        return new ServiceResult<LoginDetailsDto>
         {
-            Result = new LoginDto()
+            Result = new LoginDetailsDto()
             {
-                user = res.Result,
+                Id = res.Result.Id,
+                FirstName = res.Result.FirstName,
+                LastName = res.Result.LastName,
+                Email = res.Result.Email,
+                IsAdmin = res.Result.IsAdmin,
                 AccessToken = _jwtManager.Generate(res.Result)
             }
         };

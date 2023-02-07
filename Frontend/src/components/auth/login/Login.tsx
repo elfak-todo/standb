@@ -8,16 +8,25 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Dispatch, MouseEvent, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 
-import UserLoginDto from '../../../models/User.login.dto';
+import UserLoginDto from '../../../dto/User.login.dto';
+import { login } from '../../../services/user.service';
+import UserContext from '../../userManager/UserManager';
 
 interface LoginProps {
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 function Login({ setDialogOpen }: LoginProps) {
-  const [user, setUser] = useState<UserLoginDto>({
+  const { setUser } = useContext(UserContext);
+  const [userCreds, setUserCreds] = useState<UserLoginDto>({
     email: '',
     password: '',
   });
@@ -34,7 +43,7 @@ function Login({ setDialogOpen }: LoginProps) {
 
   const handleLogin = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { email, password } = user;
+    const { email, password } = userCreds;
     if (email === '' || password === '') {
       setSnackbar({
         open: true,
@@ -44,8 +53,24 @@ function Login({ setDialogOpen }: LoginProps) {
       return;
     }
 
-    console.log(user);
-    setDialogOpen(false);
+    login(userCreds)
+      .then(({ data }) => {
+        setUser(data);
+        setDialogOpen(false);
+      })
+      .catch(({ response }) => {
+        const { data } = response;
+        setSnackbar({
+          open: true,
+          message:
+            data == 'InvalidPassword'
+              ? 'Uneta lozinka nije validna.'
+              : data == 'UserNotFound'
+              ? 'Email nije registrovan.'
+              : 'Greška na strani servera.',
+          severity: 'error',
+        });
+      });
   };
   return (
     <>
@@ -66,7 +91,9 @@ function Login({ setDialogOpen }: LoginProps) {
             label="Email"
             variant="outlined"
             required
-            onChange={(e) => setUser((s) => ({ ...s, email: e.target.value }))}
+            onChange={(e) =>
+              setUserCreds((s) => ({ ...s, email: e.target.value }))
+            }
           />
           <TextField
             sx={{ marginBottom: 2 }}
@@ -75,7 +102,7 @@ function Login({ setDialogOpen }: LoginProps) {
             type="password"
             required
             onChange={(e) =>
-              setUser((s) => ({ ...s, password: e.target.value }))
+              setUserCreds((s) => ({ ...s, password: e.target.value }))
             }
           />
           <Button variant="contained" onClick={handleLogin}>
@@ -85,7 +112,7 @@ function Login({ setDialogOpen }: LoginProps) {
       </Card>
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={1000}
         onClose={(s) => ({ ...s, open: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
