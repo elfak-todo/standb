@@ -7,9 +7,11 @@ import { useContext, useState } from 'react';
 import './Navbar.css';
 import Auth from '../auth/Auth';
 import UserContext from '../userManager/UserManager';
+import Create from '../create/Create';
 
 function Navbar() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
@@ -39,6 +41,7 @@ function Navbar() {
               size="small"
               color="error"
               sx={{ ml: 2, bgcolor: red[500] }}
+              onClick={() => setIsCreateOpen(true)}
             >
               Kreiraj oglas
             </Button>
@@ -73,6 +76,7 @@ function Navbar() {
         </AppBar>
       </Box>
       <Auth isOpen={isAuthDialogOpen} setIsOpen={setIsAuthDialogOpen} />
+      <Create isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} />
     </>
   );
 }

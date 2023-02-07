@@ -20,7 +20,7 @@ function Gallery() {
       <Box
         component="img"
         src={previewImg}
-        sx={{ width: 600, height: 425, mr: 1 }}
+        sx={{ width: 600, height: 425, mr: 1, borderRadius: 1.5 }}
       />
       <div className="vertical-div">
         {imgs?.map((img, i) => (
@@ -35,6 +35,7 @@ function Gallery() {
               mb: 1,
               cursor: 'pointer',
               border: img == previewImg ? 2.5 : 0,
+              borderRadius: 1.5,
               borderColor: 'primary.dark',
               boxSizing: 'border-box',
             }}

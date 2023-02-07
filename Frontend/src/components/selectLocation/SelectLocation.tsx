@@ -2,7 +2,7 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 function SelectLocation() {
   return (
-    <Box sx={{ minWidth: 150 }}>
+    <Box sx={{ width: 150 }}>
       <FormControl fullWidth>
         <InputLabel size="small">Lokacija</InputLabel>
         <Select size="small" label="Lokacija" defaultValue={''}>

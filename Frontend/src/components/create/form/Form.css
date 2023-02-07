@@ -1,0 +1,17 @@
+.form-details-div {
+    display: flex;
+    margin-top: 10px;
+}
+
+.form-pair-div {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.form-select-div {
+    width: 345px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}

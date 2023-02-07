@@ -1,0 +1,11 @@
+.image-form-main-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-form-preview-div {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    height: 130px;
+}
