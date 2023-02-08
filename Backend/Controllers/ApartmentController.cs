@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-
 [ApiController]
 [Authorize]
 [Route("[controller]")]
@@ -15,6 +14,13 @@ public class ApartmentController : ControllerBase
     public ApartmentController(IApartmentService apartmentService)
     {
         _apartmentService = apartmentService;
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        return Ok(await _apartmentService.GetAll());
     }
 
     [HttpPost]

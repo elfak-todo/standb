@@ -43,5 +43,5 @@ public class Apartment
     public string Description { get; set; } = String.Empty;
 
     [BsonElement("gallery")]
-    public string[]? Gallery { get; set; }
+    public List<string> Gallery { get; set; } = new List<string>();
 }

@@ -2,14 +2,19 @@ import { AppBar, Avatar, Box, Button, Typography } from '@mui/material';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { red, green } from '@mui/material/colors';
 import { useNavigate } from 'react-router';
-import { useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 
 import './Navbar.css';
 import Auth from '../auth/Auth';
 import UserContext from '../userManager/UserManager';
 import Create from '../create/Create';
+import Apartment from '../../models/Apartment.model';
 
-function Navbar() {
+interface NavbarProps {
+  setFeed?: Dispatch<SetStateAction<Apartment[]>>;
+}
+
+function Navbar({ setFeed }: NavbarProps) {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState<boolean>(false);
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -76,7 +81,11 @@ function Navbar() {
         </AppBar>
       </Box>
       <Auth isOpen={isAuthDialogOpen} setIsOpen={setIsAuthDialogOpen} />
-      <Create isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} />
+      <Create
+        isOpen={isCreateOpen}
+        setIsOpen={setIsCreateOpen}
+        setFeed={setFeed!}
+      />
     </>
   );
 }

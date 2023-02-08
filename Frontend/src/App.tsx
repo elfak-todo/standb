@@ -8,7 +8,6 @@ function App() {
   return (
     <UserManager>
       <AxiosConfig />
-      <Navbar />
       <AppRoutes />
     </UserManager>
   );

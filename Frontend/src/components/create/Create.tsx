@@ -5,18 +5,20 @@ import {
   DialogContent,
   Typography,
 } from '@mui/material';
-import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import Form from './form/Form';
 import Apartment from '../../models/Apartment.model';
 import ImageForm from './imageForm/ImageForm';
+import { createApartmentAd } from '../../services/apartment.service';
 
 interface CreateProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setFeed: Dispatch<SetStateAction<Apartment[]>>;
 }
 
-function Create({ isOpen, setIsOpen }: CreateProps) {
+function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
   const [apartment, setApartment] = useState<Apartment>({
     title: '',
     price: -1,
@@ -33,7 +35,21 @@ function Create({ isOpen, setIsOpen }: CreateProps) {
   });
 
   const handleCreate = () => {
-    console.log(apartment);
+    const { gallery, ...rest } = apartment;
+    const formData = new FormData();
+
+    formData.set('apartment', JSON.stringify(rest));
+
+    for (let i = 0; i < apartment.gallery.length; i++) {
+      formData.append('gallery', apartment.gallery[i]);
+    }
+
+    createApartmentAd(formData)
+      .then(({ data }) => {
+        setFeed((s) => [data, ...s]);
+        setIsOpen(false);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

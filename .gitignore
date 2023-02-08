@@ -52,4 +52,5 @@ yarn-error.log*
 
 /Backend/bin
 /Backend/obj
+/Backend/wwwroot
 **/.vscode

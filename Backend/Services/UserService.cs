@@ -8,7 +8,6 @@ namespace Backend.Services;
 
 public interface IUserService
 {
-    Task<List<User>?> GetUsers();
     Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds);
     Task<ServiceResult<bool>> Register(RegisterDto regData);
     Task<ServiceResult<User>> Authenticate(string email, string password);
@@ -29,9 +28,6 @@ public class UserService : IUserService
         _passwordManager = passwordManager;
         _jwtManager = jwtManager;
     }
-
-    public async Task<List<User>?> GetUsers() => await _userCollection.Find(_ => true).ToListAsync();
-
     public async Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds)
     {
         var res = await Authenticate(loginCreds.Email, loginCreds.Password);

@@ -1,4 +1,5 @@
 export default interface Apartment {
+  id?: string;
   title: string;
   price: number;
   category: string;

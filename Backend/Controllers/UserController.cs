@@ -19,15 +19,6 @@ public class UserController : ControllerBase
         _jwtManager = jwtManager;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var user = _jwtManager.GetUserDetails(HttpContext.User);
-        Console.WriteLine(user?.Id);
-
-        return Ok(await _userService.GetUsers());
-    }
-
     [AllowAnonymous]
     [HttpPost]
     [Route("login")]
