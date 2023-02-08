@@ -1,6 +1,6 @@
 .form-details-div {
     display: flex;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .form-pair-div {
@@ -10,7 +10,7 @@
 }
 
 .form-select-div {
-    width: 345px;
+    width: 365px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;

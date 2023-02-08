@@ -5,9 +5,10 @@ import {
   DialogContent,
   Typography,
 } from '@mui/material';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
 
 import Form from './form/Form';
+import Apartment from '../../models/Apartment.model';
 import ImageForm from './imageForm/ImageForm';
 
 interface CreateProps {
@@ -16,6 +17,25 @@ interface CreateProps {
 }
 
 function Create({ isOpen, setIsOpen }: CreateProps) {
+  const [apartment, setApartment] = useState<Apartment>({
+    title: '',
+    price: -1,
+    category: '',
+    location: '',
+    squareFootage: -1,
+    storey: -1,
+    roomsCount: -1,
+    heatingType: '',
+    isRegistered: false,
+    hasParking: false,
+    description: '',
+    gallery: [],
+  });
+
+  const handleCreate = () => {
+    console.log(apartment);
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -27,12 +47,16 @@ function Create({ isOpen, setIsOpen }: CreateProps) {
         <Typography variant="h6" sx={{ mb: 1 }}>
           Kreiranje oglasa
         </Typography>
-        <Form />
-        <ImageForm />
+        <Form setApartment={setApartment} />
+        <ImageForm apartment={apartment} setApartment={setApartment} />
       </DialogContent>
       <DialogActions>
-        <Button variant="contained">Kreiraj</Button>
-        <Button variant="outlined">Odustani</Button>
+        <Button variant="contained" onClick={handleCreate}>
+          Kreiraj
+        </Button>
+        <Button variant="outlined" onClick={() => setIsOpen(false)}>
+          Odustani
+        </Button>
       </DialogActions>
     </Dialog>
   );

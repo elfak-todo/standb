@@ -4,8 +4,15 @@
 }
 
 .image-form-preview-div {
-    margin-top: 10px;
     display: flex;
     align-items: center;
+    margin-top: 10px;
     height: 130px;
+}
+
+.image-form-img-div {
+    width: 150px;
+    height: 100px;
+    margin: 20px 0px 20px 16px;
+    border-radius: 10px;
 }

@@ -5,12 +5,25 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import Apartment from '../../../models/Apartment.model';
 import SelectCategory from '../../selectCategory/SelectCategory';
 import SelectLocation from '../../selectLocation/SelectLocation';
 
 import './Form.css';
 
-function Form() {
+interface FormProps {
+  setApartment: Dispatch<SetStateAction<Apartment>>;
+}
+
+function Form({ setApartment }: FormProps) {
+  const [category, setCategory] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+
+  useEffect(() => {
+    setApartment((s) => ({ ...s, category: category, location: location }));
+  }, [category, location]);
+
   return (
     <div>
       <Typography variant="body1">Osnovne informacije</Typography>
@@ -22,6 +35,9 @@ function Form() {
           size="small"
           required
           sx={{ mb: 2 }}
+          onChange={(e) =>
+            setApartment((s) => ({ ...s, title: e.target.value }))
+          }
         />
         <TextField
           label="Cena"
@@ -33,11 +49,14 @@ function Form() {
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
           }}
           sx={{ mb: 2, ml: 2, width: 150 }}
+          onChange={(e) =>
+            setApartment((s) => ({ ...s, price: parseInt(e.target.value) }))
+          }
         />
       </div>
       <div className="form-select-div">
-        <SelectCategory />
-        <SelectLocation />
+        <SelectCategory setCategory={setCategory} />
+        <SelectLocation setLocation={setLocation} />
       </div>
       <Typography variant="body1">Detalji</Typography>
       <Divider />
@@ -55,6 +74,12 @@ function Form() {
               ),
             }}
             sx={{ mb: 1 }}
+            onChange={(e) =>
+              setApartment((s) => ({
+                ...s,
+                squareFootage: parseInt(e.target.value),
+              }))
+            }
           />
           <TextField
             label="Spratnost"
@@ -63,6 +88,9 @@ function Form() {
             size="small"
             required
             sx={{ mb: 1 }}
+            onChange={(e) =>
+              setApartment((s) => ({ ...s, storey: parseInt(e.target.value) }))
+            }
           />
         </div>
         <div className="form-pair-div">
@@ -73,6 +101,12 @@ function Form() {
             size="small"
             required
             sx={{ mb: 1 }}
+            onChange={(e) =>
+              setApartment((s) => ({
+                ...s,
+                roomsCount: parseInt(e.target.value),
+              }))
+            }
           />
           <TextField
             label="Grejanje"
@@ -80,14 +114,33 @@ function Form() {
             size="small"
             required
             sx={{ mb: 1 }}
+            onChange={(e) =>
+              setApartment((s) => ({ ...s, heatingType: e.target.value }))
+            }
           />
         </div>
         <div className="form-pair-div">
           <div>
-            <span>Uknjiženo</span> <Checkbox />
+            <span>Uknjiženo</span>{' '}
+            <Checkbox
+              onChange={(e) =>
+                setApartment((s) => ({
+                  ...s,
+                  isRegistered: !s.isRegistered,
+                }))
+              }
+            />
           </div>
           <div>
-            <span>Parking</span> <Checkbox />
+            <span>Parking</span>{' '}
+            <Checkbox
+              onChange={(e) =>
+                setApartment((s) => ({
+                  ...s,
+                  hasParking: !s.hasParking,
+                }))
+              }
+            />
           </div>
         </div>
       </div>
@@ -100,6 +153,12 @@ function Form() {
         multiline
         rows={4}
         variant="outlined"
+        onChange={(e) =>
+          setApartment((s) => ({
+            ...s,
+            description: e.target.value,
+          }))
+        }
       />
       <Typography variant="body1" sx={{ mt: 1 }}>
         Fotografije
