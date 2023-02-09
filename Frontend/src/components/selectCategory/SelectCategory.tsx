@@ -2,14 +2,11 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Category } from '../../enums/Category.enum';
 interface SelectCategoryProps {
-  defaultSelected?: string;
-  setCategory: Dispatch<SetStateAction<string>>;
+  category: Category;
+  setCategory: Dispatch<SetStateAction<Category>>;
 }
 
-function SelectCategory({
-  defaultSelected = '',
-  setCategory,
-}: SelectCategoryProps) {
+function SelectCategory({ category, setCategory }: SelectCategoryProps) {
   const categories = Object.values(Category);
 
   return (
@@ -19,8 +16,8 @@ function SelectCategory({
         <Select
           size="small"
           label="Kategorija"
-          defaultValue={defaultSelected}
-          onChange={(e) => setCategory(e.target.value)}
+          value={category}
+          onChange={(e) => setCategory(e.target.value as Category)}
         >
           {categories.map((cat, i) => (
             <MenuItem key={i} value={cat}>

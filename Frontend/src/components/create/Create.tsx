@@ -10,11 +10,12 @@ import {
 } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import Form from './form/Form';
+import Form from '../apartmentForm/ApartmentForm';
 import Apartment from '../../models/Apartment.model';
-import ImageForm from './imageForm/ImageForm';
+import ImageForm from '../imageForm/ImageForm';
 import { createApartmentAd } from '../../services/apartment.service';
-import Portal from '@mui/material/Portal';
+import { Category } from '../../enums/Category.enum';
+import { Location } from '../../enums/Location.enum';
 
 interface CreateProps {
   isOpen: boolean;
@@ -23,11 +24,12 @@ interface CreateProps {
 }
 
 function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [apartment, setApartment] = useState<Apartment>({
     title: '',
     price: -1,
-    category: '',
-    location: '',
+    category: Category.Default,
+    location: Location.Default,
     squareFootage: -1,
     storey: -1,
     roomsCount: -1,
@@ -49,13 +51,13 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
   });
 
   const handleCreate = () => {
-    const { gallery, ...rest } = apartment;
+    const { gallery, ...apartmentData } = apartment;
     const formData = new FormData();
 
-    formData.set('apartment', JSON.stringify(rest));
+    formData.set('apartment', JSON.stringify(apartmentData));
 
-    for (let i = 0; i < apartment.gallery.length; i++) {
-      formData.append('gallery', apartment.gallery[i]);
+    for (let i = 0; i < selectedImages.length; i++) {
+      formData.append('gallery', selectedImages[i]);
     }
 
     createApartmentAd(formData)
@@ -74,12 +76,6 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
       });
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbar((s) => {
-      return { ...s, open: false };
-    });
-  };
-
   return (
     <>
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} maxWidth="lg">
@@ -88,7 +84,7 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
             Kreiranje oglasa
           </Typography>
           <Form setApartment={setApartment} />
-          <ImageForm apartment={apartment} setApartment={setApartment} />
+          <ImageForm setSelectedImages={setSelectedImages} />
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={handleCreate}>
@@ -99,16 +95,14 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
           </Button>
         </DialogActions>
       </Dialog>
-      <Portal>
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={2000}
-          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
-        </Snackbar>
-      </Portal>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={2000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+      </Snackbar>
     </>
   );
 }

@@ -1,4 +1,5 @@
 export enum Location {
+  Default = '',
   Nis = 'Niš',
   Zajecar = 'Zaječar',
   Beograd = 'Beograd',

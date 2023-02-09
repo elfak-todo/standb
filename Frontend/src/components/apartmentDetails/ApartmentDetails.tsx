@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import Gallery from '../gallery/Gallery';
 import Apartment from '../../models/Apartment.model';
@@ -33,7 +33,10 @@ function ApartmentDetails() {
           </Typography>
         </div>
         <div>
-          <Options />
+          <Options
+            apartment={apartment!}
+            setApartment={setApartment as Dispatch<SetStateAction<Apartment>>}
+          />
           <Button
             variant="outlined"
             startIcon={<FavoriteBorderIcon />}

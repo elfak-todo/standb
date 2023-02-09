@@ -6,19 +6,26 @@ import {
   Typography,
 } from '@mui/material';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import Apartment from '../../../models/Apartment.model';
-import SelectCategory from '../../selectCategory/SelectCategory';
-import SelectLocation from '../../selectLocation/SelectLocation';
+import { Category } from '../../enums/Category.enum';
+import { Location } from '../../enums/Location.enum';
+import Apartment from '../../models/Apartment.model';
+import SelectCategory from '../selectCategory/SelectCategory';
+import SelectLocation from '../selectLocation/SelectLocation';
 
-import './Form.css';
+import './ApartmentForm.css';
 
 interface FormProps {
+  apartment?: Apartment;
   setApartment: Dispatch<SetStateAction<Apartment>>;
 }
 
-function Form({ setApartment }: FormProps) {
-  const [category, setCategory] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
+function Form({ apartment, setApartment }: FormProps) {
+  const [category, setCategory] = useState<Category>(
+    apartment ? apartment.category : Category.Default
+  );
+  const [location, setLocation] = useState<Location>(
+    apartment ? apartment.location : Location.Default
+  );
 
   useEffect(() => {
     setApartment((s) => ({ ...s, category: category, location: location }));
@@ -34,6 +41,7 @@ function Form({ setApartment }: FormProps) {
           variant="outlined"
           size="small"
           required
+          defaultValue={apartment?.title}
           sx={{ mb: 2 }}
           onChange={(e) =>
             setApartment((s) => ({ ...s, title: e.target.value }))
@@ -45,6 +53,7 @@ function Form({ setApartment }: FormProps) {
           variant="outlined"
           size="small"
           required
+          defaultValue={apartment?.price}
           InputProps={{
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
           }}
@@ -55,8 +64,8 @@ function Form({ setApartment }: FormProps) {
         />
       </div>
       <div className="form-select-div">
-        <SelectCategory setCategory={setCategory} />
-        <SelectLocation setLocation={setLocation} />
+        <SelectCategory category={category} setCategory={setCategory} />
+        <SelectLocation location={location} setLocation={setLocation} />
       </div>
       <Typography variant="body1">Detalji</Typography>
       <Divider />
@@ -68,6 +77,7 @@ function Form({ setApartment }: FormProps) {
             variant="outlined"
             size="small"
             required
+            defaultValue={apartment?.squareFootage}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">m²</InputAdornment>
@@ -87,6 +97,7 @@ function Form({ setApartment }: FormProps) {
             variant="outlined"
             size="small"
             required
+            defaultValue={apartment?.storey}
             sx={{ mb: 1 }}
             onChange={(e) =>
               setApartment((s) => ({ ...s, storey: parseInt(e.target.value) }))
@@ -100,6 +111,7 @@ function Form({ setApartment }: FormProps) {
             variant="outlined"
             size="small"
             required
+            defaultValue={apartment?.roomsCount}
             sx={{ mb: 1 }}
             onChange={(e) =>
               setApartment((s) => ({
@@ -113,6 +125,7 @@ function Form({ setApartment }: FormProps) {
             variant="outlined"
             size="small"
             required
+            defaultValue={apartment?.heatingType}
             sx={{ mb: 1 }}
             onChange={(e) =>
               setApartment((s) => ({ ...s, heatingType: e.target.value }))
@@ -123,7 +136,8 @@ function Form({ setApartment }: FormProps) {
           <div>
             <span>Uknjiženo</span>{' '}
             <Checkbox
-              onChange={(e) =>
+              checked={apartment?.isRegistered}
+              onChange={() =>
                 setApartment((s) => ({
                   ...s,
                   isRegistered: !s.isRegistered,
@@ -134,7 +148,8 @@ function Form({ setApartment }: FormProps) {
           <div>
             <span>Parking</span>{' '}
             <Checkbox
-              onChange={(e) =>
+              checked={apartment?.hasParking}
+              onChange={() =>
                 setApartment((s) => ({
                   ...s,
                   hasParking: !s.hasParking,
@@ -152,6 +167,7 @@ function Form({ setApartment }: FormProps) {
         fullWidth
         multiline
         rows={4}
+        defaultValue={apartment?.description}
         variant="outlined"
         onChange={(e) =>
           setApartment((s) => ({
