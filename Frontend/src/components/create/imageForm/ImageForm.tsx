@@ -25,10 +25,10 @@ function ImageForm({ apartment, setApartment }: ImageFormProps) {
   const handleSelectedImages = (e: any) => {
     const selectedFiles: File[] = Array.from(e.target.files);
 
-    if (selectedFiles.length > 5) {
+    if (selectedFiles.length > 4) {
       setSnackbar({
         open: true,
-        message: 'Maksimalni broj fotografija je 5!',
+        message: 'Maksimalni broj fotografija je 4!',
         severity: 'error',
       });
       return;
@@ -78,8 +78,8 @@ function ImageForm({ apartment, setApartment }: ImageFormProps) {
       </div>
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={1000}
-        onClose={(s) => ({ ...s, open: false })}
+        autoHideDuration={2000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>

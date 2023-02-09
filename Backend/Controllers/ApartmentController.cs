@@ -23,6 +23,19 @@ public class ApartmentController : ControllerBase
         return Ok(await _apartmentService.GetAll());
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("{id}")]
+    public async Task<IActionResult> GetSingle(string id)
+    {
+        var res = await _apartmentService.GetSingle(id);
+
+        if (res.StatusCode != ServiceStatusCode.Success)
+            return BadRequest(res.ErrorMessage);
+
+        return Ok(res.Result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] ApartmentDto apartmentData)
     {

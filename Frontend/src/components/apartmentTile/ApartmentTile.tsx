@@ -20,7 +20,7 @@ function ApartmentTile({ apartment }: ApartmentTileProps) {
       <CardMedia
         sx={{ height: 150, cursor: 'pointer' }}
         image={`${baseURL}${apartment.gallery[0]}`}
-        onClick={() => navigate('/details')}
+        onClick={() => navigate(`/details/${apartment.id}`)}
       />
       <CardContent>
         <Typography>{apartment.category}</Typography>

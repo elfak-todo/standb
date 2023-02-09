@@ -6,7 +6,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/details" element={<ApartmentDetailsPage />} />
+      <Route path="/details/:apartmentId" element={<ApartmentDetailsPage />} />
     </Routes>
   );
 }

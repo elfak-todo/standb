@@ -10,6 +10,7 @@ namespace Backend.Services;
 public interface IApartmentService
 {
     Task<List<Apartment>?> GetAll();
+    Task<ServiceResult<Apartment>> GetSingle(string id);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
 }
 public class ApartmentService : IApartmentService
@@ -26,6 +27,16 @@ public class ApartmentService : IApartmentService
     }
 
     public async Task<List<Apartment>?> GetAll() => await _apartmentCollection.Find(_ => true).ToListAsync();
+
+    public async Task<ServiceResult<Apartment>> GetSingle(string id)
+    {
+        var apartment = await _apartmentCollection.FindAsync(p => p.Id == id);
+
+        if (apartment is null)
+            return new ServiceResult<Apartment> { Result = null, StatusCode = ServiceStatusCode.NotFound, ErrorMessage = "ApartmentNotFound" };
+
+        return new ServiceResult<Apartment> { Result = apartment.FirstOrDefault(), StatusCode = ServiceStatusCode.Success };
+    }
 
     public async Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData)
     {

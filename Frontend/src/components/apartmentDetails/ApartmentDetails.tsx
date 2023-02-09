@@ -1,26 +1,47 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import Gallery from '../gallery/Gallery';
+import Apartment from '../../models/Apartment.model';
+import Options from '../options/Options';
+import { getSingleApartment } from '../../services/apartment.service';
+
 import './ApartmentDetails.css';
 
 function ApartmentDetails() {
+  const { apartmentId } = useParams();
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+
+  useEffect(() => {
+    if (!apartmentId) return;
+
+    getSingleApartment(apartmentId)
+      .then(({ data }) => setApartment(data))
+      .catch((err) => console.log(err));
+  }, [apartmentId]);
+
   return (
     <div className="details-main-div">
-      <Gallery />
+      <Gallery images={apartment?.gallery as string[]} />
       <div className="details-header-div">
         <div className="details-title-div ">
-          <Typography variant="h6">Dvoiposoban stan</Typography>
-          <Typography variant="subtitle1">Čair, Niš</Typography>
+          <Typography variant="h6">{apartment?.title}</Typography>
+          <Typography variant="subtitle1">{apartment?.location}</Typography>
           <Typography variant="subtitle1" color="primary">
-            <strong> 64 500 EUR</strong>
+            <strong> {`${apartment?.price} EUR`}</strong>
           </Typography>
         </div>
-        <>
-          <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
+        <div>
+          <Options />
+          <Button
+            variant="outlined"
+            startIcon={<FavoriteBorderIcon />}
+            sx={{ ml: 2 }}
+          >
             Sačuvaj oglas
           </Button>
-        </>
+        </div>
       </div>
       <Typography variant="subtitle1" sx={{ mt: 2 }}>
         <strong> Detalji</strong>
@@ -29,27 +50,27 @@ function ApartmentDetails() {
       <div className="details-box-div">
         <div className="details-box-part">
           <span>
-            <strong>Kvadratura:</strong> 55 m²
+            <strong>Kvadratura:</strong> {`${apartment?.squareFootage} m²`}
           </span>
           <span>
-            <strong>Spratnost:</strong> 1
+            <strong>Spratnost:</strong> {apartment?.storey}
           </span>
           <span>
-            <strong>Broj prostorija:</strong> 5
+            <strong>Broj prostorija:</strong> {apartment?.roomsCount}
           </span>
           <span>
-            <strong>Grejanje:</strong> Da
+            <strong>Grejanje:</strong> {apartment?.heatingType}
           </span>
         </div>
         <div className="details-box-part">
           <span>
-            <strong>Kategorija:</strong> Dvosoban stan
+            <strong>Kategorija:</strong> {apartment?.category}
           </span>
           <span>
-            <strong>Uknjiženo:</strong> Da
+            <strong>Uknjiženo:</strong> {apartment?.isRegistered ? 'Da' : 'Ne'}
           </span>
           <span>
-            <strong>Parking:</strong> Da
+            <strong>Parking:</strong> {apartment?.hasParking ? 'Da' : 'Ne'}
           </span>
         </div>
       </div>
@@ -58,16 +79,12 @@ function ApartmentDetails() {
       </Typography>
       <Divider sx={{ mb: 1 }} />
       <Box sx={{ width: 750 }}>
-        <Typography variant="body1">
-          Prodaje se dvoiposoban stan u novogradnji sa PDV-om kod Čaira. Stan je
-          površine 60 m² nalazi se na II spratu stambene zgrade sa liftom.
-          Struktura stana: ulazni hodnik, dnevni boravak sa kuhinjom i
-          trepazarijom, dve spavaće sobe, kupatilo, toalet i terasa.
-        </Typography>
+        <Typography variant="body1">{apartment?.description}</Typography>
       </Box>
       <Typography variant="subtitle1" sx={{ mt: 2 }}>
         <strong> Lokacija</strong>
       </Typography>
+      {/* //TODO fali... */}
       <Divider sx={{ mb: 1 }} />
       <Typography variant="body1">Vojvode Mišića 17, Niš 18000</Typography>
     </div>

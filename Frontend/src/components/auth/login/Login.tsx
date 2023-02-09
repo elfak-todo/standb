@@ -112,8 +112,8 @@ function Login({ setDialogOpen }: LoginProps) {
       </Card>
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={1000}
-        onClose={(s) => ({ ...s, open: false })}
+        autoHideDuration={2000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
