@@ -19,11 +19,12 @@ public class UserService : IUserService
     private readonly IPasswordManager _passwordManager;
     private readonly IJwtManager _jwtManager;
 
-    public UserService(IOptions<DatabaseSettings> databaseSettings, IPasswordManager passwordManager, IJwtManager jwtManager)
+    public UserService(IOptions<DatabaseSettings> dbSettings,
+            IPasswordManager passwordManager, IJwtManager jwtManager)
     {
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
-        var mongoDb = mongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
-        _userCollection = mongoDb.GetCollection<User>(databaseSettings.Value.UserCollectionName);
+        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+        _userCollection = mongoDb.GetCollection<User>(dbSettings.Value.UserCollectionName);
 
         _passwordManager = passwordManager;
         _jwtManager = jwtManager;
@@ -33,7 +34,12 @@ public class UserService : IUserService
         var res = await Authenticate(loginCreds.Email, loginCreds.Password);
 
         if (res.Result == null)
-            return new ServiceResult<LoginDetailsDto> { Result = null, StatusCode = ServiceStatusCode.Other, ErrorMessage = res.ErrorMessage };
+            return new ServiceResult<LoginDetailsDto>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.Other,
+                ErrorMessage = res.ErrorMessage
+            };
 
         return new ServiceResult<LoginDetailsDto>
         {
@@ -54,7 +60,11 @@ public class UserService : IUserService
         var u = await _userCollection.Find<User>(p => p.Email == regData.Email).FirstOrDefaultAsync();
 
         if (u != null)
-            return new ServiceResult<bool> { StatusCode = ServiceStatusCode.AlreadyExists, ErrorMessage = "EmailAlreadyRegistered" };
+            return new ServiceResult<bool>
+            {
+                StatusCode = ServiceStatusCode.AlreadyExists,
+                ErrorMessage = "EmailAlreadyRegistered"
+            };
 
         await _userCollection.InsertOneAsync(new User
         {
@@ -73,10 +83,19 @@ public class UserService : IUserService
         var user = await _userCollection.Find<User>(u => u.Email == email).FirstOrDefaultAsync();
 
         if (user == null)
-            return new ServiceResult<User> { Result = null, StatusCode = ServiceStatusCode.NotFound, ErrorMessage = "UserNotFound" };
+            return new ServiceResult<User>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "UserNotFound"
+            };
 
         if (!_passwordManager.VerifyPassword(password, user.Password))
-            return new ServiceResult<User> { StatusCode = ServiceStatusCode.Other, ErrorMessage = "InvalidPassword" };
+            return new ServiceResult<User>
+            {
+                StatusCode = ServiceStatusCode.Other,
+                ErrorMessage = "InvalidPassword"
+            };
 
         return new ServiceResult<User>
         {

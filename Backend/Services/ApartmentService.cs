@@ -17,11 +17,12 @@ public class ApartmentService : IApartmentService
 {
     private readonly IMongoCollection<Apartment> _apartmentCollection;
     private readonly IWebHostEnvironment _environment;
-    public ApartmentService(IOptions<DatabaseSettings> databaseSettings, IWebHostEnvironment environment)
+    public ApartmentService(IOptions<DatabaseSettings> dbSettings,
+                            IWebHostEnvironment environment)
     {
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
-        var mongoDb = mongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
-        _apartmentCollection = mongoDb.GetCollection<Apartment>(databaseSettings.Value.ApartmentCollectionName);
+        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+        _apartmentCollection = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
 
         _environment = environment;
     }
@@ -33,9 +34,18 @@ public class ApartmentService : IApartmentService
         var apartment = await _apartmentCollection.FindAsync(p => p.Id == id);
 
         if (apartment is null)
-            return new ServiceResult<Apartment> { Result = null, StatusCode = ServiceStatusCode.NotFound, ErrorMessage = "ApartmentNotFound" };
+            return new ServiceResult<Apartment>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "ApartmentNotFound"
+            };
 
-        return new ServiceResult<Apartment> { Result = apartment.FirstOrDefault(), StatusCode = ServiceStatusCode.Success };
+        return new ServiceResult<Apartment>
+        {
+            Result = apartment.FirstOrDefault(),
+            StatusCode = ServiceStatusCode.Success
+        };
     }
 
     public async Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData)
@@ -43,7 +53,11 @@ public class ApartmentService : IApartmentService
         var ap = JsonSerializer.Deserialize<ApartmentDetails>(apartmentData.Apartment);
 
         if (ap is null || apartmentData.Gallery is null)
-            return new ServiceResult<Apartment> { StatusCode = ServiceStatusCode.Other, ErrorMessage = "FormDataInvalid" };
+            return new ServiceResult<Apartment>
+            {
+                StatusCode = ServiceStatusCode.Other,
+                ErrorMessage = "FormDataInvalid"
+            };
 
         Apartment apartment = new Apartment()
         {
@@ -75,6 +89,10 @@ public class ApartmentService : IApartmentService
 
         await _apartmentCollection.InsertOneAsync(apartment);
 
-        return new ServiceResult<Apartment> { StatusCode = ServiceStatusCode.Success, Result = apartment };
+        return new ServiceResult<Apartment>
+        {
+            StatusCode = ServiceStatusCode.Success,
+            Result = apartment
+        };
     }
 }
