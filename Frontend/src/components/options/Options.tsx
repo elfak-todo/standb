@@ -1,17 +1,22 @@
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import Edit from '../edit/Edit';
+import Apartment from '../../models/Apartment.model';
 
-function Options() {
+interface OptionsProps {
+  apartment: Apartment;
+  setApartment: Dispatch<SetStateAction<Apartment>>;
+}
+
+function Options({ apartment, setApartment }: OptionsProps) {
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDelete = () => {
     setAnchorEl(null);
   };
 
-  const handleEdit = () => {
-    setAnchorEl(null);
-  };
   return (
     <>
       <IconButton
@@ -26,11 +31,17 @@ function Options() {
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
       >
-        <MenuItem onClick={handleEdit}>Izmeni</MenuItem>
+        <MenuItem onClick={() => setIsEditOpen(true)}>Izmeni</MenuItem>
         <MenuItem onClick={handleDelete} sx={{ color: 'red' }}>
           Obriši
         </MenuItem>
       </Menu>
+      <Edit
+        isOpen={isEditOpen}
+        setIsOpen={setIsEditOpen}
+        apartment={apartment}
+        setApartment={setApartment}
+      />
     </>
   );
 }

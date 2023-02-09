@@ -3,14 +3,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { Location } from '../../enums/Location.enum';
 
 interface SelectLocationProps {
-  defaultSelected?: string;
-  setLocation: Dispatch<SetStateAction<string>>;
+  location: Location;
+  setLocation: Dispatch<SetStateAction<Location>>;
 }
 
-function SelectLocation({
-  defaultSelected = '',
-  setLocation,
-}: SelectLocationProps) {
+function SelectLocation({ location, setLocation }: SelectLocationProps) {
   const locations = Object.values(Location);
 
   return (
@@ -20,8 +17,8 @@ function SelectLocation({
         <Select
           size="small"
           label="Lokacija"
-          defaultValue={defaultSelected}
-          onChange={(e) => setLocation(e.target.value)}
+          value={location}
+          onChange={(e) => setLocation(e.target.value as Location)}
         >
           {locations.map((loc, i) => (
             <MenuItem key={i} value={loc}>

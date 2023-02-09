@@ -1,16 +1,16 @@
 import { Alert, AlertColor, Box, Button, Snackbar } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import './ImageForm.css';
-import Apartment from '../../../models/Apartment.model';
+import { baseURL } from '../../config';
 
 interface ImageFormProps {
-  apartment: Apartment;
-  setApartment: Dispatch<SetStateAction<Apartment>>;
+  selectedImages?: string[];
+  setSelectedImages: Dispatch<SetStateAction<File[]>>;
 }
 
-function ImageForm({ apartment, setApartment }: ImageFormProps) {
+function ImageForm({ selectedImages, setSelectedImages }: ImageFormProps) {
   const [previewImgs, setPreviewImgs] = useState<string[]>([]);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -21,6 +21,11 @@ function ImageForm({ apartment, setApartment }: ImageFormProps) {
     message: '',
     severity: 'success',
   });
+
+  useEffect(() => {
+    if (!selectedImages) return;
+    setPreviewImgs(selectedImages.map((img) => baseURL + img));
+  }, [selectedImages]);
 
   const handleSelectedImages = (e: any) => {
     const selectedFiles: File[] = Array.from(e.target.files);
@@ -38,7 +43,7 @@ function ImageForm({ apartment, setApartment }: ImageFormProps) {
       selectedFiles.map((file: File) => URL.createObjectURL(file))
     );
 
-    setApartment((s) => ({ ...s, gallery: e.target.files }));
+    setSelectedImages(e.target.files);
   };
 
   return (
