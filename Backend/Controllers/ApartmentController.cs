@@ -1,4 +1,5 @@
 using Backend.Dto;
+using Backend.Enums;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,10 @@ public class ApartmentController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] string? q,
+        [FromQuery] string? loc, [FromQuery] string? cat, [FromQuery] SortBy? sortBy)
     {
-        return Ok(await _apartmentService.GetAll());
+        return Ok(await _apartmentService.GetAll(q, loc, cat, sortBy));
     }
 
     [AllowAnonymous]

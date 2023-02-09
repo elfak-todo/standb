@@ -1,13 +1,28 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { Dispatch, SetStateAction, useState } from 'react';
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
 import { Category } from '../../enums/Category.enum';
-interface SelectCategoryProps {
-  category: Category;
-  setCategory: Dispatch<SetStateAction<Category>>;
+import { SearchParams } from '../../interfaces/SearchParams.interface';
+
+interface Props {
+  searchParams: SearchParams;
+  setSearchParams: Dispatch<SetStateAction<SearchParams>>;
 }
 
-function SelectCategory({ category, setCategory }: SelectCategoryProps) {
+function SelectCategory({ searchParams, setSearchParams }: Props) {
   const categories = Object.values(Category);
+
+  const onChangeHandler = (e: SelectChangeEvent<Category>) => {
+    setSearchParams((state) => {
+      return { ...state, cat: e.target.value as Category };
+    });
+  };
 
   return (
     <Box sx={{ width: 200 }}>
@@ -16,8 +31,8 @@ function SelectCategory({ category, setCategory }: SelectCategoryProps) {
         <Select
           size="small"
           label="Kategorija"
-          value={category}
-          onChange={(e) => setCategory(e.target.value as Category)}
+          value={searchParams.cat ?? ''}
+          onChange={onChangeHandler}
         >
           {categories.map((cat, i) => (
             <MenuItem key={i} value={cat}>

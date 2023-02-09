@@ -1,20 +1,28 @@
-import { useState } from 'react';
-import { Category } from '../../enums/Category.enum';
-import { Location } from '../../enums/Location.enum';
+import { Dispatch, SetStateAction } from 'react';
+import { SearchParams } from '../../interfaces/SearchParams.interface';
 import SelectCategory from '../selectCategory/SelectCategory';
 import SelectLocation from '../selectLocation/SelectLocation';
 import SelectPriceOrder from '../selectPriceOrder/SelectPriceOrder';
 
 import './Filter.css';
 
-function Filter() {
-  const [category, setCategory] = useState<Category>(Category.Default);
-  const [location, setLocation] = useState<Location>(Location.Default);
+interface Props {
+  searchParams: SearchParams;
+  setSearchParams: Dispatch<SetStateAction<SearchParams>>;
+}
+
+function Filter({ searchParams, setSearchParams }: Props) {
   return (
     <div className="filter-main-div">
-      <SelectLocation location={location} setLocation={setLocation} />
-      <SelectCategory category={category} setCategory={setCategory} />
-      <SelectPriceOrder />
+      <SelectLocation
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
+      <SelectCategory
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
+      <SelectPriceOrder setSearchParams={setSearchParams} />
     </div>
   );
 }

@@ -1,14 +1,31 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import { Dispatch, SetStateAction } from 'react';
 import { Location } from '../../enums/Location.enum';
+import { SearchParams } from '../../interfaces/SearchParams.interface';
 
 interface SelectLocationProps {
-  location: Location;
-  setLocation: Dispatch<SetStateAction<Location>>;
+  searchParams: SearchParams;
+  setSearchParams: Dispatch<SetStateAction<SearchParams>>;
 }
 
-function SelectLocation({ location, setLocation }: SelectLocationProps) {
+function SelectLocation({
+  searchParams,
+  setSearchParams,
+}: SelectLocationProps) {
   const locations = Object.values(Location);
+
+  const onChangeHandler = (e: SelectChangeEvent<Location>) => {
+    setSearchParams((state) => {
+      return { ...state, loc: e.target.value as Location };
+    });
+  };
 
   return (
     <Box sx={{ width: 150 }}>
@@ -17,8 +34,8 @@ function SelectLocation({ location, setLocation }: SelectLocationProps) {
         <Select
           size="small"
           label="Lokacija"
-          value={location}
-          onChange={(e) => setLocation(e.target.value as Location)}
+          value={searchParams.loc ?? ''}
+          onChange={onChangeHandler}
         >
           {locations.map((loc, i) => (
             <MenuItem key={i} value={loc}>

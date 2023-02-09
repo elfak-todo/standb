@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Backend.Configuration;
 using Backend.Dto;
+using Backend.Enums;
 using Backend.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -9,7 +10,8 @@ namespace Backend.Services;
 
 public interface IApartmentService
 {
-    Task<List<Apartment>?> GetAll();
+    Task<List<Apartment>?> GetAll(string? query, string? location,
+             string? category, SortBy? sortBy);
     Task<ServiceResult<Apartment>> GetSingle(string id);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
 }
@@ -22,12 +24,33 @@ public class ApartmentService : IApartmentService
     {
         var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
         var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-        _apartmentCollection = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
+        _apartmentCollection
+            = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
 
         _environment = environment;
     }
 
-    public async Task<List<Apartment>?> GetAll() => await _apartmentCollection.Find(_ => true).ToListAsync();
+    public async Task<List<Apartment>?> GetAll(string? query, string? location,
+                string? category, SortBy? sortBy)
+    {
+        var result = _apartmentCollection.Find(ap =>
+            (string.IsNullOrEmpty(query)
+                || ap.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+                || ap.Description.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+            && (string.IsNullOrEmpty(location) || location == ap.Location)
+            && (string.IsNullOrEmpty(category) || category == ap.Category));
+
+        if (sortBy == SortBy.PriceAscending)
+        {
+            result = result.SortBy(ap => ap.Price);
+        }
+        else if (sortBy == SortBy.PriceDescending)
+        {
+            result = result.SortByDescending(ap => ap.Price);
+        }
+
+        return await result.ToListAsync();
+    }
 
     public async Task<ServiceResult<Apartment>> GetSingle(string id)
     {

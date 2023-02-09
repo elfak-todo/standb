@@ -13,16 +13,22 @@ function ApartmentTile({ apartment }: ApartmentTileProps) {
   const navigate = useNavigate();
 
   return (
-    <Card sx={{ width: 250, height: 350, margin: 2 }} className="tile-card">
+    <Card
+      sx={{ width: 250, height: 350, margin: 2 }}
+      className="tile-card"
+      onClick={() => navigate(`/details/${apartment.id}`)}
+    >
       <Box className="badge-div" sx={{ backgroundColor: 'primary.dark' }}>
         <strong> {`${apartment.squareFootage} m²`} </strong>
       </Box>
       <CardMedia
         sx={{ height: 150, cursor: 'pointer' }}
         image={`${baseURL}${apartment.gallery[0]}`}
-        onClick={() => navigate(`/details/${apartment.id}`)}
       />
       <CardContent>
+        <Typography color="primary">
+          <strong>{apartment.title}</strong>
+        </Typography>
         <Typography>{apartment.category}</Typography>
         <Typography variant="body2">{apartment.location}</Typography>
         <Typography color="primary">
