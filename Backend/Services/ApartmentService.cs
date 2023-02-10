@@ -16,6 +16,7 @@ public interface IApartmentService
     Task<ServiceResult<Apartment>> GetSingle(string id);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
     Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData);
+    Task<ServiceResult<bool>> Delete(string id);
 }
 public class ApartmentService : IApartmentService
 {
@@ -173,6 +174,24 @@ public class ApartmentService : IApartmentService
         {
             Result = apartment,
             StatusCode = ServiceStatusCode.Success
+        };
+    }
+
+    public async Task<ServiceResult<bool>> Delete(string id)
+    {
+        var res = await _apartmentCollection.DeleteOneAsync(Builders<Apartment>.Filter.Eq("_id", new ObjectId(id)));
+
+        if (res.DeletedCount == 0)
+            return new ServiceResult<bool>
+            {
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "ApartmentNotFound"
+            };
+
+        return new ServiceResult<bool>
+        {
+            Result = true,
+            StatusCode = ServiceStatusCode.Success,
         };
     }
 }

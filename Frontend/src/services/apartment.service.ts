@@ -33,3 +33,7 @@ export const editApartmentAd = (id: string, data: FormData) => {
     },
   });
 };
+
+export const deleteApartmentAd = (id: string) => {
+  return axios.delete<boolean>(`/Apartment/${id}`);
+};

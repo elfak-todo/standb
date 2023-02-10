@@ -60,4 +60,16 @@ public class ApartmentController : ControllerBase
 
         return Ok(res.Result);
     }
+
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var res = await _apartmentService.Delete(id);
+
+        if (res.StatusCode != ServiceStatusCode.Success)
+            return BadRequest(res.ErrorMessage);
+
+        return Ok(res.Result);
+    }
 }

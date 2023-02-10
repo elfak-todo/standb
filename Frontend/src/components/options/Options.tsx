@@ -3,6 +3,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Edit from '../edit/Edit';
 import Apartment from '../../models/Apartment.model';
+import { deleteApartmentAd } from '../../services/apartment.service';
+import { useNavigate } from 'react-router';
 
 interface OptionsProps {
   apartment: Apartment;
@@ -12,9 +14,15 @@ interface OptionsProps {
 function Options({ apartment, setApartment }: OptionsProps) {
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
 
   const handleDelete = () => {
-    setAnchorEl(null);
+    deleteApartmentAd(apartment.id!)
+      .then(() => {
+        navigate('/', { replace: true });
+        setAnchorEl(null);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

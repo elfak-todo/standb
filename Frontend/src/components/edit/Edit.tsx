@@ -1,8 +1,11 @@
 import {
+  Alert,
+  AlertColor,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -39,6 +42,16 @@ function Edit({ isOpen, setIsOpen, apartment, setApartment }: EditProps) {
     gallery: [],
   });
 
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
   useEffect(() => {
     setEditApartmentData(apartment);
   }, [apartment]);
@@ -59,6 +72,11 @@ function Edit({ isOpen, setIsOpen, apartment, setApartment }: EditProps) {
       .then(({ data }) => {
         setApartment(data);
         setIsOpen(false);
+        setSnackbar({
+          open: true,
+          message: 'Oglas je uspešno izmenjen.',
+          severity: 'success',
+        });
       })
       .catch(({ err }) => console.log(err));
   };
@@ -69,29 +87,39 @@ function Edit({ isOpen, setIsOpen, apartment, setApartment }: EditProps) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleCancelEdit} maxWidth="lg">
-      <DialogContent>
-        <Typography variant="h6" sx={{ mb: 1 }}>
-          Izmena oglasa
-        </Typography>
-        <Form
-          apartment={editApartmentData}
-          setApartment={setEditApartmentData}
-        />
-        <ImageForm
-          selectedImages={editApartmentData?.gallery as string[]}
-          setSelectedImages={setSelectedImages}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button variant="contained" onClick={handleEdit}>
-          Sačuvaj izmene
-        </Button>
-        <Button variant="outlined" onClick={handleCancelEdit}>
-          Odustani
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog open={isOpen} onClose={handleCancelEdit} maxWidth="lg">
+        <DialogContent>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Izmena oglasa
+          </Typography>
+          <Form
+            apartment={editApartmentData}
+            setApartment={setEditApartmentData}
+          />
+          <ImageForm
+            selectedImages={editApartmentData?.gallery as string[]}
+            setSelectedImages={setSelectedImages}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={handleEdit}>
+            Sačuvaj izmene
+          </Button>
+          <Button variant="outlined" onClick={handleCancelEdit}>
+            Odustani
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={2000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+      </Snackbar>
+    </>
   );
 }
 
