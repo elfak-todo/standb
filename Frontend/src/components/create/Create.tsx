@@ -64,6 +64,11 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
       .then(({ data }) => {
         setFeed((s) => [data, ...s]);
         setIsOpen(false);
+        setSnackbar({
+          open: true,
+          message: 'Oglas je uspešno kreiran.',
+          severity: 'success',
+        });
       })
       .catch(({ response }) => {
         if (response.data === 'FormDataInvalid') {

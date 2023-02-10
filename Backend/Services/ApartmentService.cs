@@ -179,14 +179,19 @@ public class ApartmentService : IApartmentService
 
     public async Task<ServiceResult<bool>> Delete(string id)
     {
-        var res = await _apartmentCollection.DeleteOneAsync(Builders<Apartment>.Filter.Eq("_id", new ObjectId(id)));
+        var apartment = await _apartmentCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
 
-        if (res.DeletedCount == 0)
+        if (apartment is null)
             return new ServiceResult<bool>
             {
                 StatusCode = ServiceStatusCode.NotFound,
                 ErrorMessage = "ApartmentNotFound"
             };
+
+        foreach (string imgName in apartment.Gallery)
+            _imageService.DeleteImage(imgName);
+
+        await _apartmentCollection.DeleteOneAsync(Builders<Apartment>.Filter.Eq("_id", new ObjectId(id)));
 
         return new ServiceResult<bool>
         {
