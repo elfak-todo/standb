@@ -4,6 +4,7 @@ using Backend.Dto;
 using Backend.Enums;
 using Backend.Models;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Backend.Services;
@@ -14,20 +15,21 @@ public interface IApartmentService
              string? category, SortBy? sortBy);
     Task<ServiceResult<Apartment>> GetSingle(string id);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
+    Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData);
 }
 public class ApartmentService : IApartmentService
 {
     private readonly IMongoCollection<Apartment> _apartmentCollection;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IImageService _imageService;
     public ApartmentService(IOptions<DatabaseSettings> dbSettings,
-                            IWebHostEnvironment environment)
+                            IImageService imageService)
     {
         var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
         var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _apartmentCollection
             = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
 
-        _environment = environment;
+        _imageService = imageService;
     }
 
     public async Task<List<Apartment>?> GetAll(string? query, string? location,
@@ -99,15 +101,9 @@ public class ApartmentService : IApartmentService
 
         foreach (IFormFile img in apartmentData.Gallery)
         {
-            string extension = Path.GetExtension(img.FileName);
-            string fileName = Guid.NewGuid().ToString();
-            string imagePath = Path.Combine(_environment.WebRootPath, fileName + extension);
-
-            using (var stream = File.Create(imagePath))
-            {
-                await img.CopyToAsync(stream);
-                apartment.Gallery.Add(fileName + extension);
-            }
+            var imgName = await _imageService.SaveImage(img);
+            if (imgName is not null)
+                apartment.Gallery.Add(imgName);
         }
 
         await _apartmentCollection.InsertOneAsync(apartment);
@@ -116,6 +112,67 @@ public class ApartmentService : IApartmentService
         {
             StatusCode = ServiceStatusCode.Success,
             Result = apartment
+        };
+    }
+
+    public async Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData)
+    {
+        var apartment = await _apartmentCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
+
+        if (apartment is null)
+            return new ServiceResult<Apartment>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "ApartmentNotFound"
+            };
+
+        var ap = JsonSerializer.Deserialize<ApartmentDetails>(apartmentData.Apartment);
+
+        if (ap is null)
+            return new ServiceResult<Apartment>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.Other,
+                ErrorMessage = "FormDataInvalid"
+            };
+
+        apartment.Title = ap.title;
+        apartment.Price = ap.price;
+        apartment.Category = ap.category;
+        apartment.Location = ap.location;
+        apartment.SquareFootage = ap.squareFootage;
+        apartment.Storey = ap.storey;
+        apartment.RoomsCount = ap.roomsCount;
+        apartment.HeatingType = ap.heatingType;
+        apartment.IsRegistered = ap.isRegistered;
+        apartment.HasParking = ap.hasParking;
+        apartment.Description = ap.description;
+
+        if (apartmentData.Gallery is not null)
+        {
+            foreach (var imgName in apartment.Gallery)
+                _imageService.DeleteImage(imgName);
+
+            apartment.Gallery.Clear();
+
+            foreach (IFormFile img in apartmentData.Gallery)
+            {
+                var imgName = await _imageService.SaveImage(img);
+                if (imgName is not null)
+                    apartment.Gallery.Add(imgName);
+            }
+        }
+
+        await _apartmentCollection.ReplaceOneAsync(
+            Builders<Apartment>.Filter.Eq("_id", new ObjectId(id)),
+            apartment,
+            new ReplaceOptions { IsUpsert = false });
+
+        return new ServiceResult<Apartment>
+        {
+            Result = apartment,
+            StatusCode = ServiceStatusCode.Success
         };
     }
 }

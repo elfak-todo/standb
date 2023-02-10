@@ -25,3 +25,11 @@ export const createApartmentAd = (data: FormData) => {
     },
   });
 };
+
+export const editApartmentAd = (id: string, data: FormData) => {
+  return axios.patch<Apartment>(`/Apartment/${id}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};

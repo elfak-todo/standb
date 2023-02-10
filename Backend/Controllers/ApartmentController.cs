@@ -48,4 +48,16 @@ public class ApartmentController : ControllerBase
 
         return Ok(res.Result);
     }
+
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> Update([FromForm] ApartmentDto apartmentData, string id)
+    {
+        var res = await _apartmentService.Update(id, apartmentData);
+
+        if (res.StatusCode != ServiceStatusCode.Success)
+            return BadRequest(res.ErrorMessage);
+
+        return Ok(res.Result);
+    }
 }

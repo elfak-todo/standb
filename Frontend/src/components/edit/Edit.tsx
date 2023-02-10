@@ -10,6 +10,7 @@ import { Category } from '../../enums/Category.enum';
 import { Location } from '../../enums/Location.enum';
 
 import Apartment from '../../models/Apartment.model';
+import { editApartmentAd } from '../../services/apartment.service';
 import Form from '../apartmentForm/ApartmentForm';
 import ImageForm from '../imageForm/ImageForm';
 
@@ -43,8 +44,23 @@ function Edit({ isOpen, setIsOpen, apartment, setApartment }: EditProps) {
   }, [apartment]);
 
   const handleEdit = () => {
-    console.log(selectedImages);
-    console.log(editApartmentData);
+    const { gallery, ...apartmentData } = editApartmentData;
+    const formData = new FormData();
+
+    formData.set('apartment', JSON.stringify(apartmentData));
+
+    if (selectedImages.length) {
+      for (let i = 0; i < selectedImages.length; i++) {
+        formData.append('gallery', selectedImages[i]);
+      }
+    }
+
+    editApartmentAd(apartment.id!, formData)
+      .then(({ data }) => {
+        setApartment(data);
+        setIsOpen(false);
+      })
+      .catch(({ err }) => console.log(err));
   };
 
   const handleCancelEdit = () => {
