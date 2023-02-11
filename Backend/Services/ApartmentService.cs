@@ -23,13 +23,10 @@ public class ApartmentService : IApartmentService
     private readonly IMongoCollection<Apartment> _apartmentCollection;
     private readonly IImageService _imageService;
     public ApartmentService(IOptions<DatabaseSettings> dbSettings,
-                            IImageService imageService)
+                            IImageService imageService, IMongoDatabase mongoDb)
     {
-        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _apartmentCollection
             = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
-
         _imageService = imageService;
     }
 

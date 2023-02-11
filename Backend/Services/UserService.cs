@@ -20,12 +20,9 @@ public class UserService : IUserService
     private readonly IJwtManager _jwtManager;
 
     public UserService(IOptions<DatabaseSettings> dbSettings,
-            IPasswordManager passwordManager, IJwtManager jwtManager)
+            IPasswordManager passwordManager, IJwtManager jwtManager, IMongoDatabase mongoDb)
     {
-        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _userCollection = mongoDb.GetCollection<User>(dbSettings.Value.UserCollectionName);
-
         _passwordManager = passwordManager;
         _jwtManager = jwtManager;
     }

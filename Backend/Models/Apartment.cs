@@ -44,4 +44,7 @@ public class Apartment
 
     [BsonElement("gallery")]
     public List<string> Gallery { get; set; } = new List<string>();
+
+    [BsonElement("comments")]
+    public List<Comment> Comments { get; set; } = new List<Comment>();
 }

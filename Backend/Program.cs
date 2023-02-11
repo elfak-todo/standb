@@ -3,11 +3,19 @@ using Backend.Configuration;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //MongoDB
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MongoDB"));
+var dbSettings = builder.Configuration.GetSection("MongoDB").Get<DatabaseSettings>()!;
+
+var mongoClient = new MongoClient(dbSettings.ConnectionString);
+builder.Services.AddSingleton<IMongoClient>(mongoClient);
+
+var mongoDb = mongoClient.GetDatabase(dbSettings.DatabaseName);
+builder.Services.AddSingleton<IMongoDatabase>(mongoDb);
 
 //Jwt
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
