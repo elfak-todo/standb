@@ -53,4 +53,5 @@ yarn-error.log*
 /Backend/bin
 /Backend/obj
 /Backend/wwwroot/*
+!/Backend/wwwroot/.gitkeep
 **/.vscode
