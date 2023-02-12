@@ -47,15 +47,17 @@ function Navbar({ setFeed }: NavbarProps) {
                 >
                   Sačuvani oglasi
                 </Button>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="error"
-                  sx={{ ml: 2, bgcolor: red[500] }}
-                  onClick={() => setIsCreateOpen(true)}
-                >
-                  Kreiraj oglas
-                </Button>
+                {user.isAdmin && (
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    color="error"
+                    sx={{ ml: 2, bgcolor: red[500] }}
+                    onClick={() => setIsCreateOpen(true)}
+                  >
+                    Kreiraj oglas
+                  </Button>
+                )}
               </>
             )}
             <div className="navbar-auth-div">

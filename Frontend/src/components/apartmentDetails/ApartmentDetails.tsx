@@ -79,12 +79,16 @@ function ApartmentDetails() {
               <strong> {`${apartment.price} EUR`}</strong>
             </Typography>
           </div>
-          <div>
-            <Options
-              apartment={apartment}
-              setApartment={setApartment as Dispatch<SetStateAction<Apartment>>}
-            />
-            {user && (
+          {user && (
+            <div>
+              {user.isAdmin && (
+                <Options
+                  apartment={apartment}
+                  setApartment={
+                    setApartment as Dispatch<SetStateAction<Apartment>>
+                  }
+                />
+              )}
               <Button
                 variant={apartment.isFavourite ? 'contained' : 'outlined'}
                 startIcon={
@@ -95,8 +99,8 @@ function ApartmentDetails() {
               >
                 {apartment.isFavourite ? 'Sačuvano' : 'Sačuvaj oglas'}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>
           <strong> Detalji</strong>

@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import UserLoginDetails from '../../dto/User.login.details.dto';
+import { createRootAdmin } from '../../services/user.service';
 
 interface UserContextState {
   user: UserLoginDetails | null;
@@ -19,6 +20,10 @@ export const UserManager: FC<any> = ({ children }) => {
   const [user, setUser] = useState<UserLoginDetails | null>(
     JSON.parse(localStorage.getItem('user') ?? 'null')
   );
+
+  useEffect(() => {
+    createRootAdmin();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));

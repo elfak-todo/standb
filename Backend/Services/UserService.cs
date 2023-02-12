@@ -10,6 +10,7 @@ namespace Backend.Services;
 
 public interface IUserService
 {
+    Task<ServiceResult<bool>> CreateRootAdmin();
     Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds);
     Task<ServiceResult<bool>> Register(RegisterDto regData);
     Task<ServiceResult<User>> Authenticate(string email, string password);
@@ -33,6 +34,30 @@ public class UserService : IUserService
             = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
         _jwtManager = jwtManager;
     }
+
+    public async Task<ServiceResult<bool>> CreateRootAdmin()
+    {
+        var res = _userCollection.Find(p => p.Email == "admin@elfak.rs");
+
+        if (res == null)
+        {
+            await _userCollection.InsertOneAsync(new User
+            {
+                FirstName = "Admin",
+                LastName = "Admin",
+                Email = "admin@elfak.rs",
+                Password = _passwordManager.HashPassword("admin"),
+                IsAdmin = true,
+            });
+        }
+
+        return new ServiceResult<bool>
+        {
+            Result = true,
+            StatusCode = ServiceStatusCode.Success
+        };
+    }
+
     public async Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds)
     {
         var res = await Authenticate(loginCreds.Email, loginCreds.Password);

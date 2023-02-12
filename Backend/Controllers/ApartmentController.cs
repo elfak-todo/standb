@@ -53,14 +53,16 @@ public class ApartmentController : ControllerBase
     public async Task<IActionResult> GetSingle(string id)
     {
         var authUser = _jwtManager.GetUserDetails(HttpContext.User);
-        if (authUser is null)
-            return BadRequest("NotLoggedIn");
 
-        User? user = await _userService.GetById(authUser.Id);
-        if (user is null)
-            return BadRequest("UserInvalid");
+        List<string>? favs = null;
 
-        var res = await _apartmentService.GetSingle(id, user.Favourites);
+        if (authUser is not null)
+        {
+            User? user = await _userService.GetById(authUser.Id);
+            favs = user != null ? user.Favourites : null;
+        }
+
+        var res = await _apartmentService.GetSingle(id, favs);
 
         if (res.StatusCode != ServiceStatusCode.Success)
             return BadRequest(res.ErrorMessage);

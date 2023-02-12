@@ -14,7 +14,7 @@ public interface IApartmentService
     Task<List<Apartment>?> GetAll(string? query, string? location,
              string? category, SortBy? sortBy);
     Task<List<Apartment>?> GetFavourites(List<string> ids);
-    Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string> userFavourites);
+    Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string>? userFavourites);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
     Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData);
     Task<ServiceResult<bool>> Delete(string id);
@@ -64,7 +64,7 @@ public class ApartmentService : IApartmentService
         return await _apartmentCollection.Find(filter).ToListAsync();
     }
 
-    public async Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string> userFavourites)
+    public async Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string>? userFavourites)
     {
         var apartment = await _apartmentCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
 
@@ -94,7 +94,7 @@ public class ApartmentService : IApartmentService
                 Description = apartment.Description,
                 Gallery = apartment.Gallery,
                 Comments = apartment.Comments,
-                IsFavourite = userFavourites.Contains(id)
+                IsFavourite = userFavourites != null ? userFavourites.Contains(id) : false
             },
             StatusCode = ServiceStatusCode.Success
         };

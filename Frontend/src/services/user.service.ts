@@ -14,3 +14,7 @@ export const register = (data: UserRegisterDto) => {
 export const toggleFavouriteApartment = (apartmentId: string) => {
   return axios.patch<boolean>(`User/toggleFavourite/${apartmentId}`);
 };
+
+export const createRootAdmin = () => {
+  return axios.post(`User/createRoot`);
+};

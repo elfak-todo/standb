@@ -61,4 +61,12 @@ public class UserController : ControllerBase
 
         return Ok(res.Result);
     }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("createRoot")]
+    public async Task<IActionResult> CreateRoot()
+    {
+        return Ok(await _userService.CreateRootAdmin());
+    }
 }
