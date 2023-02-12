@@ -44,35 +44,21 @@ public class UserController : ControllerBase
 
         return Ok();
     }
-        
-    [HttpPost]
-    [Route("favourites")]
-    public async Task<IActionResult> AddToFavourites(string ad)
+
+    [HttpPatch]
+    [Route("toggleFavourite/{apartmentID}")]
+    public async Task<IActionResult> AddToFavourites(string apartmentID)
     {
         var user = _jwtManager.GetUserDetails(HttpContext.User);
-        if (user == null)
-        {
-            return BadRequest();
-        }
-        var res = await _userService.AddToFavourites(user.Id, ad);
-        return Ok(res.Result);
-    }
 
-    [HttpDelete]
-    [Route("favourites")]
-    public async Task<IActionResult> RemoveFromFavourites(string ad)
-    {
-        var user = _jwtManager.GetUserDetails(HttpContext.User);
         if (user == null)
-        {
-            return BadRequest();
-        }
+            return BadRequest("NotLoggedIn");
 
-        var res = await _userService.RemoveFromFavourites(user.Id, ad);
+        var res = await _userService.ToggleFavourite(user.Id, apartmentID);
 
         if (res.StatusCode != ServiceStatusCode.Success)
             return BadRequest(res.ErrorMessage);
-        
-        return Ok();
+
+        return Ok(res.Result);
     }
 }

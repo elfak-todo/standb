@@ -13,8 +13,8 @@ public interface IApartmentService
 {
     Task<List<Apartment>?> GetAll(string? query, string? location,
              string? category, SortBy? sortBy);
-    Task<List<Apartment>?> GetFavourites(string userID);
-    Task<ServiceResult<Apartment>> GetSingle(string id);
+    Task<List<Apartment>?> GetFavourites(List<string> ids);
+    Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string> userFavourites);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
     Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData);
     Task<ServiceResult<bool>> Delete(string id);
@@ -57,27 +57,45 @@ public class ApartmentService : IApartmentService
     }
 
 
-    public async Task<List<Apartment>?> GetByID(List<string>? apartmentID)
+    public async Task<List<Apartment>?> GetFavourites(List<string> ids)
     {
-        var result = _apartmentCollection.Find(ap => ap.Id == apartmentID.Any());
+        var filter = Builders<Apartment>.Filter.In(p => p.Id, ids);
 
-        return await result.ToListAsync();
+        return await _apartmentCollection.Find(filter).ToListAsync();
     }
-    public async Task<ServiceResult<Apartment>> GetSingle(string id)
+
+    public async Task<ServiceResult<ApartmentFavDto>> GetSingle(string id, List<string> userFavourites)
     {
-        var apartment = await _apartmentCollection.FindAsync(p => p.Id == id);
+        var apartment = await _apartmentCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
 
         if (apartment is null)
-            return new ServiceResult<Apartment>
+            return new ServiceResult<ApartmentFavDto>
             {
                 Result = null,
                 StatusCode = ServiceStatusCode.NotFound,
                 ErrorMessage = "ApartmentNotFound"
             };
 
-        return new ServiceResult<Apartment>
+        return new ServiceResult<ApartmentFavDto>
         {
-            Result = apartment.FirstOrDefault(),
+            Result = new ApartmentFavDto()
+            {
+                Id = apartment.Id,
+                Title = apartment.Title,
+                Price = apartment.Price,
+                Category = apartment.Category,
+                Location = apartment.Location,
+                SquareFootage = apartment.SquareFootage,
+                Storey = apartment.Storey,
+                RoomsCount = apartment.RoomsCount,
+                HeatingType = apartment.HeatingType,
+                IsRegistered = apartment.IsRegistered,
+                HasParking = apartment.HasParking,
+                Description = apartment.Description,
+                Gallery = apartment.Gallery,
+                Comments = apartment.Comments,
+                IsFavourite = userFavourites.Contains(id)
+            },
             StatusCode = ServiceStatusCode.Success
         };
     }

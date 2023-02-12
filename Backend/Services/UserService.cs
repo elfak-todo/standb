@@ -13,8 +13,8 @@ public interface IUserService
     Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds);
     Task<ServiceResult<bool>> Register(RegisterDto regData);
     Task<ServiceResult<User>> Authenticate(string email, string password);
-    Task<ServiceResult<Apartment>> AddToFavourites(string userID, string apartmentID);
-    Task<ServiceResult<bool>> RemoveFromFavourites(string userID, string apartmnetID);
+    Task<ServiceResult<bool>> ToggleFavourite(string userID, string apartmentID);
+    Task<User?> GetById(string id);
 }
 
 public class UserService : IUserService
@@ -115,85 +115,35 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<ServiceResult<Apartment>> AddToFavourites(string userID, string apartmentID)
+    public async Task<User?> GetById(string id)
     {
-        var usCursor = await _userCollection.FindAsync(u => u.Id == userID);
-        var apCursor = await _apartmentCollection.FindAsync(p => p.Id == apartmentID);
-        var user = await usCursor.FirstOrDefaultAsync();
-        var apartment = await apCursor.FirstOrDefaultAsync();
-
-        if (user == null)
-        {
-            return new ServiceResult<Apartment>
-            {
-                Result = null,
-                StatusCode = ServiceStatusCode.NotFound,
-                ErrorMessage = "UserNotFound"
-            };
-        }
-
-        if (apartment == null)
-        {
-            return new ServiceResult<Apartment>
-            {
-                Result = null,
-                StatusCode = ServiceStatusCode.NotFound,
-                ErrorMessage = "ApartmentNotFound"
-            };
-        }
-
-        user.Favourites.Add(apartment.Id);
-
-        await _userCollection.ReplaceOneAsync(
-            Builders<User>.Filter.Eq("_id", new ObjectId(user.Id)),
-            user,
-            new ReplaceOptions { IsUpsert = false});
-
-        return new ServiceResult<Apartment>
-            {
-                Result = apartment,
-                StatusCode = ServiceStatusCode.Success
-            };
+        return await _userCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<ServiceResult<bool>> RemoveFromFavourites(string userID, string apartmentID)
-    {   
-        var usCursor = await _userCollection.FindAsync(u => u.Id == userID);
-        
-        var user = await usCursor.FirstOrDefaultAsync();
-        
+    public async Task<ServiceResult<bool>> ToggleFavourite(string userID, string apartmentID)
+    {
+        User? user = await GetById(userID);
+
         if (user == null)
-        {
             return new ServiceResult<bool>
             {
-                Result = false,
                 StatusCode = ServiceStatusCode.NotFound,
                 ErrorMessage = "UserNotFound"
             };
-        }
-        
-        var apartment = user.Favourites.FirstOrDefault(f => f == apartmentID);
-        
-        if (apartment == null)
-        {
-            return new ServiceResult<bool>
-            {
-                Result = false,
-                StatusCode = ServiceStatusCode.NotFound,
-                ErrorMessage = "ApartmentNotFound"
-            };
-        }
-        
-        user.Favourites.Remove(apartment);
-        
+
+        if (user.Favourites.Contains(apartmentID))
+            user.Favourites.Remove(apartmentID);
+        else
+            user.Favourites.Add(apartmentID);
+
         await _userCollection.ReplaceOneAsync(
             Builders<User>.Filter.Eq("_id", new ObjectId(user.Id)),
             user,
-            new ReplaceOptions { IsUpsert = false});
-        
+            new ReplaceOptions { IsUpsert = false });
+
         return new ServiceResult<bool>
         {
-            Result=true,
+            Result = true,
             StatusCode = ServiceStatusCode.Success
         };
     }

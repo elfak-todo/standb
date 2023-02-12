@@ -1,6 +1,13 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { Dispatch, SetStateAction, useEffect, useState, useContext } from 'react';
+import CheckIcon from '@mui/icons-material/Check';
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useContext,
+} from 'react';
 import { useParams } from 'react-router';
 import Gallery from '../gallery/Gallery';
 import Apartment from '../../models/Apartment.model';
@@ -10,11 +17,31 @@ import { getSingleApartment } from '../../services/apartment.service';
 import './ApartmentDetails.css';
 import CommentSection from '../commentSection/CommentSection';
 import UserContext from '../userManager/UserManager';
+import { toggleFavouriteApartment } from '../../services/user.service';
+import ApartmentDto from '../../dto/ApartmentDetails.dto';
+import { Category } from '../../enums/Category.enum';
+import { Location } from '../../enums/Location.enum';
 
 function ApartmentDetails() {
   const { apartmentId } = useParams();
-  const [apartment, setApartment] = useState<Apartment | null>(null);
-  const { user, setUser } = useContext(UserContext);
+  const [apartment, setApartment] = useState<ApartmentDto>({
+    id: '',
+    title: '',
+    price: -1,
+    category: Category.Default,
+    location: Location.Default,
+    squareFootage: -1,
+    storey: -1,
+    roomsCount: -1,
+    heatingType: '',
+    isRegistered: false,
+    hasParking: false,
+    description: '',
+    gallery: [],
+    comments: [],
+    isFavourite: false,
+  });
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (!apartmentId) return;
@@ -27,6 +54,12 @@ function ApartmentDetails() {
   if (!apartment || !setApartment) {
     return null;
   }
+
+  const toggleFavourite = () => {
+    toggleFavouriteApartment(apartment.id!)
+      .then(() => setApartment((s) => ({ ...s, isFavourite: !s?.isFavourite })))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Box
@@ -51,14 +84,18 @@ function ApartmentDetails() {
               apartment={apartment}
               setApartment={setApartment as Dispatch<SetStateAction<Apartment>>}
             />
-            {user && 
-            <Button
-              variant="outlined"
-              startIcon={<FavoriteBorderIcon />}
-              sx={{ ml: 2 }}
-            >
-              Sačuvaj oglas
-            </Button>}
+            {user && (
+              <Button
+                variant={apartment.isFavourite ? 'contained' : 'outlined'}
+                startIcon={
+                  apartment.isFavourite ? <CheckIcon /> : <FavoriteBorderIcon />
+                }
+                sx={{ ml: 2 }}
+                onClick={toggleFavourite}
+              >
+                {apartment.isFavourite ? 'Sačuvano' : 'Sačuvaj oglas'}
+              </Button>
+            )}
           </div>
         </div>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>

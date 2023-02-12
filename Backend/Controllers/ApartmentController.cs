@@ -1,5 +1,6 @@
 using Backend.Dto;
 using Backend.Enums;
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace Backend.Controllers;
 public class ApartmentController : ControllerBase
 {
     private readonly IApartmentService _apartmentService;
+    private readonly IUserService _userService;
     private readonly IJwtManager _jwtManager;
-    public ApartmentController(IApartmentService apartmentService, IJwtManager jwtManager)
+    public ApartmentController(IApartmentService apartmentService, IJwtManager jwtManager, IUserService userService)
     {
         _apartmentService = apartmentService;
         _jwtManager = jwtManager;
+        _userService = userService;
     }
 
     [AllowAnonymous]
@@ -27,18 +30,21 @@ public class ApartmentController : ControllerBase
         return Ok(await _apartmentService.GetAll(q, loc, cat, sortBy));
     }
 
-
     [HttpGet]
-    public async Task<IActionResult> GetFavourites(string userID)
+    [Route("favourites")]
+    public async Task<IActionResult> GetFavourites()
     {
-        var user = _jwtManager.GetUserDetails(HttpContext.User);
-        if (user == null)
-        {
-            return BadRequest();
-        }
+        var authUser = _jwtManager.GetUserDetails(HttpContext.User);
 
-        var res = _apartmentService.GetByID(user.Favourites);
-        throw new NotImplementedException();
+        if (authUser is null)
+            return BadRequest("NotLoggedIn");
+
+        User? user = await _userService.GetById(authUser.Id);
+
+        if (user is null)
+            return BadRequest("UserInvalid");
+
+        return Ok(await _apartmentService.GetFavourites(user.Favourites));
     }
 
     [AllowAnonymous]
@@ -46,7 +52,15 @@ public class ApartmentController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> GetSingle(string id)
     {
-        var res = await _apartmentService.GetSingle(id);
+        var authUser = _jwtManager.GetUserDetails(HttpContext.User);
+        if (authUser is null)
+            return BadRequest("NotLoggedIn");
+
+        User? user = await _userService.GetById(authUser.Id);
+        if (user is null)
+            return BadRequest("UserInvalid");
+
+        var res = await _apartmentService.GetSingle(id, user.Favourites);
 
         if (res.StatusCode != ServiceStatusCode.Success)
             return BadRequest(res.ErrorMessage);

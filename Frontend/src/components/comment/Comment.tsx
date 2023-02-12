@@ -15,10 +15,11 @@ import Comment from '../../models/Comment.model';
 import { dateSrp } from '../../dateParser';
 import { deleteComment } from '../../services/comment.service';
 import Apartment from '../../models/Apartment.model';
+import ApartmentDto from '../../dto/ApartmentDetails.dto';
 
 interface Props {
   comment: Comment;
-  setApartment: Dispatch<SetStateAction<Apartment | null>>;
+  setApartment: Dispatch<SetStateAction<ApartmentDto>>;
 }
 
 function CommentCard({ comment, setApartment }: Props) {

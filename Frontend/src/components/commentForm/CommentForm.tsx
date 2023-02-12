@@ -1,6 +1,7 @@
 import { Box, TextField } from '@mui/material';
 import { Dispatch, SetStateAction, useContext, useRef } from 'react';
 import { useParams } from 'react-router';
+import ApartmentDto from '../../dto/ApartmentDetails.dto';
 import { CommentDto } from '../../dto/Comment.dto';
 import Apartment from '../../models/Apartment.model';
 import Comment from '../../models/Comment.model';
@@ -9,7 +10,7 @@ import { createComment } from '../../services/comment.service';
 import UserContext from '../userManager/UserManager';
 
 interface Props {
-  setApartment: Dispatch<SetStateAction<Apartment | null>>;
+  setApartment: Dispatch<SetStateAction<ApartmentDto>>;
 }
 
 function CommentForm({ setApartment }: Props) {

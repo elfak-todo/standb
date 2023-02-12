@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
+import ApartmentDto from '../../dto/ApartmentDetails.dto';
 import Apartment from '../../models/Apartment.model';
 import Comment from '../../models/Comment.model';
 import CommentCard from '../comment/Comment';
@@ -9,7 +10,7 @@ import './CommentSection.css';
 
 interface Props {
   apartment: Apartment;
-  setApartment: Dispatch<SetStateAction<Apartment | null>>;
+  setApartment: Dispatch<SetStateAction<ApartmentDto>>;
 }
 
 function CommentSection({ apartment, setApartment }: Props) {

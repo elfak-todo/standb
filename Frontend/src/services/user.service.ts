@@ -10,3 +10,7 @@ export const login = (data: UserLoginDto) => {
 export const register = (data: UserRegisterDto) => {
   return axios.post<boolean>(`User/register`, data);
 };
+
+export const toggleFavouriteApartment = (apartmentId: string) => {
+  return axios.patch<boolean>(`User/toggleFavourite/${apartmentId}`);
+};

@@ -14,6 +14,7 @@ function Gallery({ images }: GalleryProps) {
   const [previewImg, setPreviewImg] = useState<string>(placeholderImg);
 
   useEffect(() => {
+    if (!images.length) return;
     setPreviewImg(images ? `${baseURL}/${images[0]}` : placeholderImg);
   }, [images]);
 

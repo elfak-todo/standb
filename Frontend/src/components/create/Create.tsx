@@ -16,6 +16,7 @@ import ImageForm from '../imageForm/ImageForm';
 import { createApartmentAd } from '../../services/apartment.service';
 import { Category } from '../../enums/Category.enum';
 import { Location } from '../../enums/Location.enum';
+import { useLocation } from 'react-router';
 
 interface CreateProps {
   isOpen: boolean;
@@ -38,8 +39,8 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
     hasParking: false,
     description: '',
     gallery: [],
+    comments: [],
   });
-
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -49,6 +50,7 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
     message: '',
     severity: 'success',
   });
+  const location = useLocation();
 
   const handleCreate = () => {
     const { gallery, ...apartmentData } = apartment;
@@ -62,7 +64,9 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
 
     createApartmentAd(formData)
       .then(({ data }) => {
-        setFeed((s) => [data, ...s]);
+        if (location.pathname === '/') {
+          setFeed((s) => [data, ...s]);
+        }
         setIsOpen(false);
         setSnackbar({
           open: true,
@@ -71,7 +75,7 @@ function Create({ isOpen, setIsOpen, setFeed }: CreateProps) {
         });
       })
       .catch(({ response }) => {
-        if (response.data === 'FormDataInvalid') {
+        if (response?.data === 'FormDataInvalid') {
           setSnackbar({
             open: true,
             message: 'Molimo popunite sva polja!',
