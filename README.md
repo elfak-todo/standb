@@ -19,6 +19,15 @@ Projekat III iz predmeta Napredne baze podataka. **_standb_** omogućava postavl
 
 Pre pokretanja projekta pokrenuti MongoDB bazu na lokalnoj mašini, na portu **27017**.
 
+### Napomena
+
+Osnovni root admin nalog biće kreiran pri pokretanju aplikacije radi testiranja svih funkcionalnosti aplikacije.
+
+```
+email: admin@elfak.rs
+password: admin
+```
+
 Backend:
 
 ```
