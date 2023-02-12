@@ -6,12 +6,8 @@ namespace Backend.Models;
 
 public class Comment
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
+    [BsonElement("id")]
     public string Id { get; set; } = String.Empty;
-
-    [BsonElement("title")]
-    public string Title { get; set; } = String.Empty;
 
     [BsonElement("text")]
     public string Text { get; set; } = String.Empty;
@@ -19,6 +15,6 @@ public class Comment
     [BsonElement("publicationTime")]
     public DateTime PublicationTime { get; set; }
 
-    [BsonElement("authorId")]
-    public MongoDBRef? AuthorId { get; set; }
+    [BsonElement("author")]
+    public Author? Author { get; set; }
 }

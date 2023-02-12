@@ -19,8 +19,12 @@ function ApartmentDetails() {
 
     getSingleApartment(apartmentId)
       .then(({ data }) => setApartment(data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }, [apartmentId]);
+
+  if (!apartment || !setApartment) {
+    return null;
+  }
 
   return (
     <Box
@@ -31,18 +35,18 @@ function ApartmentDetails() {
       }}
     >
       <div className="details-main-div">
-        <Gallery images={apartment?.gallery as string[]} />
+        <Gallery images={apartment.gallery as string[]} />
         <div className="details-header-div">
           <div className="details-title-div ">
-            <Typography variant="h6">{apartment?.title}</Typography>
-            <Typography variant="subtitle1">{apartment?.location}</Typography>
+            <Typography variant="h6">{apartment.title}</Typography>
+            <Typography variant="subtitle1">{apartment.location}</Typography>
             <Typography variant="subtitle1" color="primary">
-              <strong> {`${apartment?.price} EUR`}</strong>
+              <strong> {`${apartment.price} EUR`}</strong>
             </Typography>
           </div>
           <div>
             <Options
-              apartment={apartment!}
+              apartment={apartment}
               setApartment={setApartment as Dispatch<SetStateAction<Apartment>>}
             />
             <Button
@@ -61,28 +65,27 @@ function ApartmentDetails() {
         <div className="details-box-div">
           <div className="details-box-part">
             <span>
-              <strong>Kvadratura:</strong> {`${apartment?.squareFootage} m²`}
+              <strong>Kvadratura:</strong> {`${apartment.squareFootage} m²`}
             </span>
             <span>
-              <strong>Spratnost:</strong> {apartment?.storey}
+              <strong>Spratnost:</strong> {apartment.storey}
             </span>
             <span>
-              <strong>Broj prostorija:</strong> {apartment?.roomsCount}
+              <strong>Broj prostorija:</strong> {apartment.roomsCount}
             </span>
             <span>
-              <strong>Grejanje:</strong> {apartment?.heatingType}
+              <strong>Grejanje:</strong> {apartment.heatingType}
             </span>
           </div>
           <div className="details-box-part">
             <span>
-              <strong>Kategorija:</strong> {apartment?.category}
+              <strong>Kategorija:</strong> {apartment.category}
             </span>
             <span>
-              <strong>Uknjiženo:</strong>{' '}
-              {apartment?.isRegistered ? 'Da' : 'Ne'}
+              <strong>Uknjiženo:</strong> {apartment.isRegistered ? 'Da' : 'Ne'}
             </span>
             <span>
-              <strong>Parking:</strong> {apartment?.hasParking ? 'Da' : 'Ne'}
+              <strong>Parking:</strong> {apartment.hasParking ? 'Da' : 'Ne'}
             </span>
           </div>
         </div>
@@ -91,7 +94,7 @@ function ApartmentDetails() {
         </Typography>
         <Divider sx={{ mb: 1 }} />
         <Box sx={{ width: 750 }}>
-          <Typography variant="body1">{apartment?.description}</Typography>
+          <Typography variant="body1">{apartment.description}</Typography>
         </Box>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>
           <strong> Lokacija</strong>
@@ -100,7 +103,7 @@ function ApartmentDetails() {
         <Divider sx={{ mb: 1 }} />
         <Typography variant="body1">Vojvode Mišića 17, Niš 18000</Typography>
       </div>
-      <CommentSection />
+      <CommentSection apartment={apartment} setApartment={setApartment} />
     </Box>
   );
 }

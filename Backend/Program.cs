@@ -26,6 +26,7 @@ builder.Services.AddScoped<IPasswordManager, PasswordManager>();
 builder.Services.AddScoped<IJwtManager, JwtManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IApartmentService, ApartmentService>();
+builder.Services.AddScoped<ICommnetService, CommentService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

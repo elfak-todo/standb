@@ -21,7 +21,7 @@ public class CommentController : ControllerBase
 
     [HttpPost]
     [Route("{apartmentId}")]
-    public async Task<IActionResult> Create([FromForm] CommentDto commentDto,
+    public async Task<IActionResult> Create([FromBody] CommentDto commentDto,
                                             string apartmentId)
     {
         var user = _jwtManager.GetUserDetails(HttpContext.User);

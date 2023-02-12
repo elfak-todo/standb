@@ -22,7 +22,7 @@ function Options({ apartment, setApartment }: OptionsProps) {
         navigate('/', { replace: true });
         setAnchorEl(null);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   return (

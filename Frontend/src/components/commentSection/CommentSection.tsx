@@ -1,10 +1,20 @@
 import { Card, CardContent, CardHeader } from '@mui/material';
-import Comment from '../comment/Comment';
+import { Dispatch, SetStateAction, useState } from 'react';
+import Apartment from '../../models/Apartment.model';
+import Comment from '../../models/Comment.model';
+import CommentCard from '../comment/Comment';
 import CommentForm from '../commentForm/CommentForm';
 
 import './CommentSection.css';
 
-function CommentSection() {
+interface Props {
+  apartment: Apartment;
+  setApartment: Dispatch<SetStateAction<Apartment | null>>;
+}
+
+function CommentSection({ apartment, setApartment }: Props) {
+  const comments = apartment.comments;
+
   return (
     <Card className="section-main-div">
       <CardHeader
@@ -12,10 +22,14 @@ function CommentSection() {
         subheader="Komentare mogu postaviti samo registrovani korisnici."
       />
       <CardContent>
-        <CommentForm />
-        <Comment />
-        <Comment />
-        <Comment />
+        <CommentForm setApartment={setApartment} />
+        {comments.map((c) => (
+          <CommentCard
+            key={c.id}
+            comment={c}
+            setApartment={setApartment}
+          ></CommentCard>
+        ))}
       </CardContent>
     </Card>
   );

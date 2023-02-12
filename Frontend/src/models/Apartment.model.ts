@@ -1,5 +1,6 @@
 import { Category } from '../enums/Category.enum';
 import { Location } from '../enums/Location.enum';
+import Comment from './Comment.model';
 
 export default interface Apartment {
   id?: string;
@@ -15,4 +16,5 @@ export default interface Apartment {
   hasParking: boolean;
   description: string;
   gallery: string[] | File[];
+  comments: Comment[];
 }

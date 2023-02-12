@@ -1,8 +1,9 @@
+import { Author } from './Author.model';
 import User from './User.model';
 
 export default interface Comment {
   id: string;
   text: string;
-  timestamp: Date;
-  author: User;
+  publicationTime: Date;
+  author: Author;
 }

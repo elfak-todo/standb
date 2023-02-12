@@ -18,7 +18,7 @@ function HomePageHeader({ setFeed }: Props) {
   useEffect(() => {
     getApartments(searchParams)
       .then(({ data }) => setFeed(data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }, [searchParams]);
 
   return (

@@ -10,24 +10,54 @@ import {
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import Comment from '../../models/Comment.model';
+import { dateSrp } from '../../dateParser';
+import { deleteComment } from '../../services/comment.service';
+import Apartment from '../../models/Apartment.model';
 
-function Comment() {
+interface Props {
+  comment: Comment;
+  setApartment: Dispatch<SetStateAction<Apartment | null>>;
+}
+
+function CommentCard({ comment, setApartment }: Props) {
+  const author = comment.author;
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    try {
+      await deleteComment(comment.id);
+
+      setApartment((state) => {
+        if (!state) return state;
+        return {
+          ...state,
+          comments: state.comments.filter((c) => c.id != comment.id),
+        };
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <Card sx={{ mt: 2.5 }}>
       <CardHeader
-        avatar={<Avatar sx={{ bgcolor: red[500] }}>AM</Avatar>}
+        avatar={
+          <Avatar sx={{ bgcolor: red[500] }}>
+            {author.firstName[0]}
+            {author.lastName[0]}
+          </Avatar>
+        }
         action={
           <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
             <MoreVertIcon />
           </IconButton>
         }
-        title="Andrija Mitić"
-        subheader="Januar 14, 2024"
+        title={author.firstName + ' ' + author.lastName}
+        subheader={dateSrp(comment.publicationTime)}
       />
       <Menu
         anchorEl={anchorEl}
@@ -40,13 +70,11 @@ function Comment() {
       </Menu>
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {comment.text}
         </Typography>
       </CardContent>
     </Card>
   );
 }
 
-export default Comment;
+export default CommentCard;
