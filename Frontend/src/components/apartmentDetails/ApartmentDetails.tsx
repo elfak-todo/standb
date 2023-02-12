@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router';
 import Gallery from '../gallery/Gallery';
 import Apartment from '../../models/Apartment.model';
@@ -9,10 +9,12 @@ import { getSingleApartment } from '../../services/apartment.service';
 
 import './ApartmentDetails.css';
 import CommentSection from '../commentSection/CommentSection';
+import UserContext from '../userManager/UserManager';
 
 function ApartmentDetails() {
   const { apartmentId } = useParams();
   const [apartment, setApartment] = useState<Apartment | null>(null);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
     if (!apartmentId) return;
@@ -49,13 +51,14 @@ function ApartmentDetails() {
               apartment={apartment}
               setApartment={setApartment as Dispatch<SetStateAction<Apartment>>}
             />
+            {user && 
             <Button
               variant="outlined"
               startIcon={<FavoriteBorderIcon />}
               sx={{ ml: 2 }}
             >
               Sačuvaj oglas
-            </Button>
+            </Button>}
           </div>
         </div>
         <Typography variant="subtitle1" sx={{ mt: 2 }}>

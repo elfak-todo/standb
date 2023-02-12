@@ -55,6 +55,7 @@ function Form({ apartment, setApartment }: FormProps) {
           required
           defaultValue={apartment?.price}
           InputProps={{
+            inputProps: {min: 0},
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
           }}
           sx={{ mb: 2, ml: 2, width: 150 }}

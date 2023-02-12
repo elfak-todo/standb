@@ -13,6 +13,7 @@ public interface IApartmentService
 {
     Task<List<Apartment>?> GetAll(string? query, string? location,
              string? category, SortBy? sortBy);
+    Task<List<Apartment>?> GetFavourites(string userID);
     Task<ServiceResult<Apartment>> GetSingle(string id);
     Task<ServiceResult<Apartment>> Create(ApartmentDto apartmentData);
     Task<ServiceResult<Apartment>> Update(string id, ApartmentDto apartmentData);
@@ -23,10 +24,13 @@ public class ApartmentService : IApartmentService
     private readonly IMongoCollection<Apartment> _apartmentCollection;
     private readonly IImageService _imageService;
     public ApartmentService(IOptions<DatabaseSettings> dbSettings,
-                            IImageService imageService, IMongoDatabase mongoDb)
+                            IImageService imageService)
     {
+        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _apartmentCollection
             = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
+
         _imageService = imageService;
     }
 
@@ -52,6 +56,13 @@ public class ApartmentService : IApartmentService
         return await result.ToListAsync();
     }
 
+
+    public async Task<List<Apartment>?> GetByID(List<string>? apartmentID)
+    {
+        var result = _apartmentCollection.Find(ap => ap.Id == apartmentID.Any());
+
+        return await result.ToListAsync();
+    }
     public async Task<ServiceResult<Apartment>> GetSingle(string id)
     {
         var apartment = await _apartmentCollection.FindAsync(p => p.Id == id);

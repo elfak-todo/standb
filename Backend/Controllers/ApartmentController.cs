@@ -12,9 +12,11 @@ namespace Backend.Controllers;
 public class ApartmentController : ControllerBase
 {
     private readonly IApartmentService _apartmentService;
-    public ApartmentController(IApartmentService apartmentService)
+    private readonly IJwtManager _jwtManager;
+    public ApartmentController(IApartmentService apartmentService, IJwtManager jwtManager)
     {
         _apartmentService = apartmentService;
+        _jwtManager = jwtManager;
     }
 
     [AllowAnonymous]
@@ -23,6 +25,20 @@ public class ApartmentController : ControllerBase
         [FromQuery] string? loc, [FromQuery] string? cat, [FromQuery] SortBy? sortBy)
     {
         return Ok(await _apartmentService.GetAll(q, loc, cat, sortBy));
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> GetFavourites(string userID)
+    {
+        var user = _jwtManager.GetUserDetails(HttpContext.User);
+        if (user == null)
+        {
+            return BadRequest();
+        }
+
+        var res = _apartmentService.GetByID(user.Favourites);
+        throw new NotImplementedException();
     }
 
     [AllowAnonymous]

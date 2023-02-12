@@ -3,6 +3,8 @@ using Backend.Dto;
 using Backend.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Bson;
+using System.Text.Json;
 
 namespace Backend.Services;
 
@@ -11,11 +13,14 @@ public interface IUserService
     Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds);
     Task<ServiceResult<bool>> Register(RegisterDto regData);
     Task<ServiceResult<User>> Authenticate(string email, string password);
+    Task<ServiceResult<Apartment>> AddToFavourites(string userID, string apartmentID);
+    Task<ServiceResult<bool>> RemoveFromFavourites(string userID, string apartmnetID);
 }
 
 public class UserService : IUserService
 {
     private readonly IMongoCollection<User> _userCollection;
+    private readonly IMongoCollection<Apartment> _apartmentCollection;
     private readonly IPasswordManager _passwordManager;
     private readonly IJwtManager _jwtManager;
 
@@ -24,6 +29,8 @@ public class UserService : IUserService
     {
         _userCollection = mongoDb.GetCollection<User>(dbSettings.Value.UserCollectionName);
         _passwordManager = passwordManager;
+        _apartmentCollection
+            = mongoDb.GetCollection<Apartment>(dbSettings.Value.ApartmentCollectionName);
         _jwtManager = jwtManager;
     }
     public async Task<ServiceResult<LoginDetailsDto>> Login(LoginCredsDto loginCreds)
@@ -104,6 +111,89 @@ public class UserService : IUserService
                 Email = user.Email,
                 IsAdmin = user.IsAdmin
             },
+            StatusCode = ServiceStatusCode.Success
+        };
+    }
+
+    public async Task<ServiceResult<Apartment>> AddToFavourites(string userID, string apartmentID)
+    {
+        var usCursor = await _userCollection.FindAsync(u => u.Id == userID);
+        var apCursor = await _apartmentCollection.FindAsync(p => p.Id == apartmentID);
+        var user = await usCursor.FirstOrDefaultAsync();
+        var apartment = await apCursor.FirstOrDefaultAsync();
+
+        if (user == null)
+        {
+            return new ServiceResult<Apartment>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "UserNotFound"
+            };
+        }
+
+        if (apartment == null)
+        {
+            return new ServiceResult<Apartment>
+            {
+                Result = null,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "ApartmentNotFound"
+            };
+        }
+
+        user.Favourites.Add(apartment.Id);
+
+        await _userCollection.ReplaceOneAsync(
+            Builders<User>.Filter.Eq("_id", new ObjectId(user.Id)),
+            user,
+            new ReplaceOptions { IsUpsert = false});
+
+        return new ServiceResult<Apartment>
+            {
+                Result = apartment,
+                StatusCode = ServiceStatusCode.Success
+            };
+    }
+
+    public async Task<ServiceResult<bool>> RemoveFromFavourites(string userID, string apartmentID)
+    {   
+        var usCursor = await _userCollection.FindAsync(u => u.Id == userID);
+        
+        var user = await usCursor.FirstOrDefaultAsync();
+        
+        if (user == null)
+        {
+            return new ServiceResult<bool>
+            {
+                Result = false,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "UserNotFound"
+            };
+        }
+        
+        var apartment = user.Favourites.FirstOrDefault(f => f == apartmentID);
+        
+        if (apartment == null)
+        {
+            return new ServiceResult<bool>
+            {
+                Result = false,
+                StatusCode = ServiceStatusCode.NotFound,
+                ErrorMessage = "ApartmentNotFound"
+            };
+        }
+        
+        user.Favourites.Remove(apartment);
+        
+        await _userCollection.ReplaceOneAsync(
+            Builders<User>.Filter.Eq("_id", new ObjectId(user.Id)),
+            user,
+            new ReplaceOptions { IsUpsert = false});
+        
+        return new ServiceResult<bool>
+        {
+            Result=true,
             StatusCode = ServiceStatusCode.Success
         };
     }

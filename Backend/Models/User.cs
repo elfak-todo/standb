@@ -23,4 +23,7 @@ public class User
 
     [BsonElement("isAdmin")]
     public bool IsAdmin { get; set; } = false;
+    
+    [BsonElement("favourites")]
+    public List<string> Favourites { get; set; } = new List<string>();
 }

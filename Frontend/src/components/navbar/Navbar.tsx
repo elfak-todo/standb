@@ -19,7 +19,7 @@ function Navbar({ setFeed }: NavbarProps) {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-
+  
   const handleLoginOrLogout = () => {
     if (user) {
       setUser(null);
@@ -36,20 +36,22 @@ function Navbar({ setFeed }: NavbarProps) {
           <div className="navbar-main-div">
             <div className="navbar-logo-div" onClick={() => navigate('/')}>
               <LocationCityIcon fontSize="large" sx={{ mb: 0.5, mr: 0.5 }} />
-              <Typography variant="h6">StanDB</Typography>
+              <Typography variant="h4">StanDB</Typography>
             </div>
+            {user &&
             <Button variant="text" sx={{ color: 'white' }}>
               Sačuvani oglasi
             </Button>
+            &&
             <Button
               variant="contained"
-              size="small"
+              size="medium"
               color="error"
               sx={{ ml: 2, bgcolor: red[500] }}
               onClick={() => setIsCreateOpen(true)}
             >
               Kreiraj oglas
-            </Button>
+            </Button>}
             <div className="navbar-auth-div">
               {user && (
                 <div className="navbar-user-div">
@@ -70,7 +72,7 @@ function Navbar({ setFeed }: NavbarProps) {
               <Button
                 variant="contained"
                 color="error"
-                size="small"
+                size="medium"
                 sx={{ ml: 2, bgcolor: red[500] }}
                 onClick={handleLoginOrLogout}
               >
