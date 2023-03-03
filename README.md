@@ -45,3 +45,20 @@ npm run dev
 ```
 
 ## Pregled
+
+### Prijavljivanje
+
+![Prijava](/assets/1.png)
+
+### Registracija
+
+![Registracija](/assets/3.png)
+
+### Kreiranje oglasa
+
+![Početna stranica](/assets/4.png)
+![Početna stranica](/assets/5.png)
+
+### Detalji oglasa
+
+![Obaveštenja](/assets/2.png)
